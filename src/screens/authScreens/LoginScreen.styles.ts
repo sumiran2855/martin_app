@@ -337,4 +337,32 @@ export const styles = StyleSheet.create({
     color: '#1f2937',
     fontWeight: '500',
   },
+
+  // Error styles
+  inputError: {
+    borderColor: '#ef4444',
+    borderWidth: 1,
+    backgroundColor: '#fef2f2',
+  },
+
+  errorText: {
+    color: '#ef4444',
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
+    fontFamily: 'Inter-Regular',
+  },
+
+  loginButtonDisabled: {
+    backgroundColor: '#9ca3af',
+    opacity: 0.6,
+  },
+
+  loginButtonTextDisabled: {
+    color: '#6b7280',
+  },
+
+  disabledText: {
+    opacity: 0.5,
+  },
 });

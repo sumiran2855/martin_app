@@ -6,13 +6,17 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { styles } from './LoginScreen.styles';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/AppNavigator';
-import { HorizontalScrollLanguageSelector } from '../common/LanguageSelector';
-import { languageStyles } from '../common/LanguageSelector.styles';
+import { HorizontalScrollLanguageSelector } from '../../components/common/LanguageSelector';
+import { languageStyles } from '../../components/common/LanguageSelector.styles';
+import { loginSchema, LoginFormData, loginDefaultValues } from '../../validations/LoginValidation';
 
 interface LoginScreenProps { }
 
@@ -24,24 +28,45 @@ const PORTAL_TITLES = {
 };
 
 const LoginScreen: React.FC<LoginScreenProps> = () => {
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>('en');
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const navigation = useNavigation();
   const route = useRoute<LoginRouteProp>();
   const portalType = route.params?.portalType || 'PRODUCT';
 
-  const handleLogin = (): void => {
-    console.log('Login pressed', {
-      username,
-      password,
-      rememberMe,
-      portalType,
-      language: selectedLanguage
-    });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid, isDirty },
+    watch,
+    setValue,
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: loginDefaultValues,
+    mode: 'onChange',
+  });
+
+  const rememberMe = watch('rememberMe');
+
+  const handleLogin = async (data: LoginFormData): Promise<void> => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    try {
+      console.log('Login pressed', {
+        ...data,
+        portalType,
+        language: selectedLanguage
+      });
+      await new Promise((resolve: any) => setTimeout(resolve, 1000));
+
+    } catch (error) {
+      console.error('Login error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleForgotPassword = (): void => {
@@ -57,11 +82,16 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
   };
 
   const toggleRememberMe = (): void => {
-    setRememberMe(!rememberMe);
+    setValue('rememberMe', !rememberMe, { shouldValidate: true });
   };
 
   const handleLanguageChange = (languageCode: string): void => {
     setSelectedLanguage(languageCode);
+  };
+
+  // Helper function to get error message
+  const getErrorMessage = (fieldName: keyof LoginFormData): string | undefined => {
+    return errors[fieldName]?.message;
   };
 
   return (
@@ -85,52 +115,91 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
               </Text>
             </View>
 
-            {/* Form */}
+            {/* Username Input */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Username</Text>
-              <TextInput
-                style={styles.input}
-                value={username}
-                onChangeText={setUsername}
-                placeholder="Enter your username"
-                placeholderTextColor="#9ca3af"
-                autoCapitalize="none"
-                autoCorrect={false}
+              <Controller
+                control={control}
+                name="username"
+                render={({ field: { onChange, onBlur, value } }: any) => (
+                  <TextInput
+                    style={[
+                      styles.input,
+                      errors.username && styles.inputError
+                    ]}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Enter your username"
+                    placeholderTextColor="#9ca3af"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    editable={!isSubmitting}
+                  />
+                )}
               />
+              {errors.username && (
+                <Text style={styles.errorText}>{getErrorMessage('username')}</Text>
+              )}
             </View>
 
+            {/* Password Input */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Password</Text>
-              <View style={styles.passwordContainer}>
-                <TextInput
-                  style={styles.passwordInput}
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="Enter your password"
-                  placeholderTextColor="#9ca3af"
-                  secureTextEntry={!isPasswordVisible}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                <TouchableOpacity
-                  style={styles.eyeButton}
-                  onPress={togglePasswordVisibility}
-                  activeOpacity={0.7}
-                >
-                  <Text style={styles.eyeIcon}>
-                    {isPasswordVisible ? '👁️' : '👁️‍🗨️'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, onBlur, value } }: any) => (
+                  <View style={styles.passwordContainer}>
+                    <TextInput
+                      style={[
+                        styles.passwordInput,
+                        errors.password && styles.inputError
+                      ]}
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      placeholder="Enter your password"
+                      placeholderTextColor="#9ca3af"
+                      secureTextEntry={!isPasswordVisible}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      editable={!isSubmitting}
+                    />
+                    <TouchableOpacity
+                      style={styles.eyeButton}
+                      onPress={togglePasswordVisibility}
+                      activeOpacity={0.7}
+                      disabled={isSubmitting}
+                    >
+                      <Text style={styles.eyeIcon}>
+                        {isPasswordVisible ? '👁️' : '👁️‍🗨️'}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+              {errors.password && (
+                <Text style={styles.errorText}>{getErrorMessage('password')}</Text>
+              )}
             </View>
 
             {/* Login Button */}
             <TouchableOpacity
-              style={styles.loginButton}
-              onPress={handleLogin}
+              style={[
+                styles.loginButton,
+                (!isValid || !isDirty || isSubmitting) && styles.loginButtonDisabled
+              ]}
+              onPress={handleSubmit(handleLogin)}
               activeOpacity={0.8}
+              disabled={!isValid || !isDirty || isSubmitting}
             >
-              <Text style={styles.loginButtonText}>Login</Text>
+              <Text style={[
+                styles.loginButtonText,
+                (!isValid || !isDirty || isSubmitting) && styles.loginButtonTextDisabled
+              ]}>
+                {isSubmitting ? 'Signing In...' : 'Login'}
+              </Text>
             </TouchableOpacity>
 
             {/* Footer Options */}
@@ -139,6 +208,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
                 style={styles.rememberMeContainer}
                 onPress={toggleRememberMe}
                 activeOpacity={0.7}
+                disabled={isSubmitting}
               >
                 <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
                   {rememberMe && <Text style={styles.checkmark}>✓</Text>}
@@ -149,8 +219,14 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
               <TouchableOpacity
                 onPress={handleForgotPassword}
                 activeOpacity={0.7}
+                disabled={isSubmitting}
               >
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                <Text style={[
+                  styles.forgotPasswordText,
+                  isSubmitting && styles.disabledText
+                ]}>
+                  Forgot Password?
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -159,10 +235,17 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
               style={styles.createAccountContainer}
               onPress={handleCreateAccount}
               activeOpacity={0.7}
+              disabled={isSubmitting}
             >
-              <Text style={styles.createAccountText}>
+              <Text style={[
+                styles.createAccountText,
+                isSubmitting && styles.disabledText
+              ]}>
                 Don't have an account?
-                <Text style={styles.createAccountLink} onPress={handleCreateAccount}> Create Account</Text>
+                <Text style={[
+                  styles.createAccountLink,
+                  isSubmitting && styles.disabledText
+                ]} onPress={handleCreateAccount}> Create Account</Text>
               </Text>
             </TouchableOpacity>
 
