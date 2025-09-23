@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -7,66 +7,51 @@ import {
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Controller } from 'react-hook-form';
 import { styles } from './LoginScreen.styles';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../navigation/AppNavigator';
+import { useSignupLogic } from '../../hooks/useSignup';
 
-interface SignupScreenProps { }
+interface SignupScreenProps {}
 
 const SignupScreen: React.FC<SignupScreenProps> = () => {
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [countryCode, setCountryCode] = useState<string>('+49');
-  const [showCountryPicker, setShowCountryPicker] = useState<boolean>(false);
-  const [phoneNumber, setPhoneNumber] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false);
-  const [currentStep, setCurrentStep] = useState<'signup' | 'verification'>('signup');
-  const [verificationCode, setVerificationCode] = useState<string>('');
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const {
+    // State
+    isPasswordVisible,
+    isConfirmPasswordVisible,
+    currentStep,
+    showCountryPicker,
+    isSubmitting,
+    countryCode,
 
-  const handleSignup = (): void => {
-    console.log('Signup pressed', {
-      firstName,
-      lastName,
-      email,
-      countryCode,
-      phoneNumber,
-      password,
-      confirmPassword
-    });
-    setCurrentStep('verification');
-  };
+    // Signup form
+    signupControl,
+    handleSignupSubmit,
+    signupErrors,
+    isSignupValid,
+    isSignupDirty,
 
-  const handleVerifyCode = (): void => {
-    console.log('Verify code pressed', {
-      email,
-      verificationCode,
-    });
-    (navigation as any).navigate({ name: 'Login', params: { portalType: 'user' } });
-  };
+    // Verification form
+    verificationControl,
+    handleVerificationSubmit,
+    verificationErrors,
+    isVerificationValid,
+    isVerificationDirty,
 
-  const handleBackToLogin = (): void => {
-    navigation.goBack();
-  };
+    // Handlers
+    handleSignup,
+    handleVerifyCode,
+    handleBackToLogin,
+    handleBackToSignup,
+    togglePasswordVisibility,
+    toggleConfirmPasswordVisibility,
+    handleCountryCodeSelect,
+    toggleCountryPicker,
+    getSignupErrorMessage,
+    getVerificationErrorMessage,
 
-  const togglePasswordVisibility = (): void => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
-
-  const toggleConfirmPasswordVisibility = (): void => {
-    setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
-  };
-
-  const countryCodes = [
-    { label: 'United States (+1)', value: '+1' },
-    { label: 'India (+91)', value: '+91' },
-    { label: 'Germany (+49)', value: '+49' },
-    { label: 'France (+33)', value: '+33' },
-  ];
+    // Data
+    countryCodes,
+  } = useSignupLogic();
 
   const renderSignupStep = () => (
     <>
@@ -82,44 +67,86 @@ const SignupScreen: React.FC<SignupScreenProps> = () => {
       <View style={styles.nameContainer}>
         <View style={styles.nameField}>
           <Text style={styles.label}>First Name</Text>
-          <TextInput
-            style={styles.input}
-            value={firstName}
-            onChangeText={setFirstName}
-            placeholder="First name"
-            placeholderTextColor="#9ca3af"
-            autoCapitalize="words"
-            autoCorrect={false}
+          <Controller
+            control={signupControl}
+            name="firstName"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={[
+                  styles.input,
+                  signupErrors.firstName && styles.inputError
+                ]}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="First name"
+                placeholderTextColor="#9ca3af"
+                autoCapitalize="words"
+                autoCorrect={false}
+                editable={!isSubmitting}
+              />
+            )}
           />
+          {signupErrors.firstName && (
+            <Text style={styles.errorText}>{getSignupErrorMessage('firstName')}</Text>
+          )}
         </View>
 
         <View style={styles.nameField}>
           <Text style={styles.label}>Last Name</Text>
-          <TextInput
-            style={styles.input}
-            value={lastName}
-            onChangeText={setLastName}
-            placeholder="Last name"
-            placeholderTextColor="#9ca3af"
-            autoCapitalize="words"
-            autoCorrect={false}
+          <Controller
+            control={signupControl}
+            name="lastName"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={[
+                  styles.input,
+                  signupErrors.lastName && styles.inputError
+                ]}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="Last name"
+                placeholderTextColor="#9ca3af"
+                autoCapitalize="words"
+                autoCorrect={false}
+                editable={!isSubmitting}
+              />
+            )}
           />
+          {signupErrors.lastName && (
+            <Text style={styles.errorText}>{getSignupErrorMessage('lastName')}</Text>
+          )}
         </View>
       </View>
 
       {/* Email Field */}
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email Address</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Enter your email"
-          placeholderTextColor="#9ca3af"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          autoCorrect={false}
+        <Controller
+          control={signupControl}
+          name="email"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={[
+                styles.input,
+                signupErrors.email && styles.inputError
+              ]}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              placeholder="Enter your email"
+              placeholderTextColor="#9ca3af"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!isSubmitting}
+            />
+          )}
         />
+        {signupErrors.email && (
+          <Text style={styles.errorText}>{getSignupErrorMessage('email')}</Text>
+        )}
       </View>
 
       {/* Phone Number Field */}
@@ -128,7 +155,8 @@ const SignupScreen: React.FC<SignupScreenProps> = () => {
         <View style={styles.phoneContainer}>
           <TouchableOpacity
             style={styles.countryCodeButton}
-            onPress={() => setShowCountryPicker(!showCountryPicker)}
+            onPress={toggleCountryPicker}
+            disabled={isSubmitting}
           >
             <Text style={styles.countryCodeText}>{countryCode}</Text>
             <Text style={styles.dropdownArrow}>▼</Text>
@@ -136,14 +164,11 @@ const SignupScreen: React.FC<SignupScreenProps> = () => {
 
           {showCountryPicker && (
             <View style={styles.countryDropdown}>
-              {countryCodes.map((country) => (
+              {countryCodes.map((country: { value: string; label: string }) => (
                 <TouchableOpacity
                   key={country.value}
                   style={styles.countryOption}
-                  onPress={() => {
-                    setCountryCode(country.value);
-                    setShowCountryPicker(false);
-                  }}
+                  onPress={() => handleCountryCodeSelect(country.value)}
                 >
                   <Text style={styles.countryOptionText}>{country.label}</Text>
                 </TouchableOpacity>
@@ -151,77 +176,130 @@ const SignupScreen: React.FC<SignupScreenProps> = () => {
             </View>
           )}
 
-          <TextInput
-            style={styles.phoneInput}
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            placeholder="Phone number"
-            placeholderTextColor="#9ca3af"
-            keyboardType="phone-pad"
-            autoCorrect={false}
+          <Controller
+            control={signupControl}
+            name="phoneNumber"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={[
+                  styles.phoneInput,
+                  signupErrors.phoneNumber && styles.inputError
+                ]}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="Phone number"
+                placeholderTextColor="#9ca3af"
+                keyboardType="phone-pad"
+                autoCorrect={false}
+                editable={!isSubmitting}
+              />
+            )}
           />
         </View>
+        {signupErrors.phoneNumber && (
+          <Text style={styles.errorText}>{getSignupErrorMessage('phoneNumber')}</Text>
+        )}
       </View>
 
       {/* Password Field */}
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Password</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Enter your password"
-            placeholderTextColor="#9ca3af"
-            secureTextEntry={!isPasswordVisible}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          <TouchableOpacity
-            style={styles.eyeButton}
-            onPress={togglePasswordVisibility}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.eyeIcon}>
-              {isPasswordVisible ? '👁️' : '👁️‍🗨️'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <Controller
+          control={signupControl}
+          name="password"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={[
+                  styles.passwordInput,
+                  signupErrors.password && styles.inputError
+                ]}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="Enter your password"
+                placeholderTextColor="#9ca3af"
+                secureTextEntry={!isPasswordVisible}
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={!isSubmitting}
+              />
+              <TouchableOpacity
+                style={styles.eyeButton}
+                onPress={togglePasswordVisibility}
+                activeOpacity={0.7}
+                disabled={isSubmitting}
+              >
+                <Text style={styles.eyeIcon}>
+                  {isPasswordVisible ? '👁️' : '👁️‍🗨️'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+        {signupErrors.password && (
+          <Text style={styles.errorText}>{getSignupErrorMessage('password')}</Text>
+        )}
       </View>
 
       {/* Confirm Password Field */}
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Confirm Password</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            placeholder="Confirm your password"
-            placeholderTextColor="#9ca3af"
-            secureTextEntry={!isConfirmPasswordVisible}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          <TouchableOpacity
-            style={styles.eyeButton}
-            onPress={toggleConfirmPasswordVisibility}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.eyeIcon}>
-              {isConfirmPasswordVisible ? '👁️' : '👁️‍🗨️'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <Controller
+          control={signupControl}
+          name="confirmPassword"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={[
+                  styles.passwordInput,
+                  signupErrors.confirmPassword && styles.inputError
+                ]}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="Confirm your password"
+                placeholderTextColor="#9ca3af"
+                secureTextEntry={!isConfirmPasswordVisible}
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={!isSubmitting}
+              />
+              <TouchableOpacity
+                style={styles.eyeButton}
+                onPress={toggleConfirmPasswordVisibility}
+                activeOpacity={0.7}
+                disabled={isSubmitting}
+              >
+                <Text style={styles.eyeIcon}>
+                  {isConfirmPasswordVisible ? '👁️' : '👁️‍🗨️'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+        {signupErrors.confirmPassword && (
+          <Text style={styles.errorText}>{getSignupErrorMessage('confirmPassword')}</Text>
+        )}
       </View>
 
       {/* Signup Button */}
       <TouchableOpacity
-        style={styles.loginButton}
-        onPress={handleSignup}
+        style={[
+          styles.loginButton,
+          (!isSignupValid || !isSignupDirty || isSubmitting) && styles.loginButtonDisabled
+        ]}
+        onPress={handleSignupSubmit(handleSignup)}
         activeOpacity={0.8}
+        disabled={!isSignupValid || !isSignupDirty || isSubmitting}
       >
-        <Text style={styles.loginButtonText}>Create Account</Text>
+        <Text style={[
+          styles.loginButtonText,
+          (!isSignupValid || !isSignupDirty || isSubmitting) && styles.loginButtonTextDisabled
+        ]}>
+          {isSubmitting ? 'Creating Account...' : 'Create Account'}
+        </Text>
       </TouchableOpacity>
 
       {/* Footer - Back to Login */}
@@ -232,8 +310,14 @@ const SignupScreen: React.FC<SignupScreenProps> = () => {
         <TouchableOpacity
           onPress={handleBackToLogin}
           activeOpacity={0.7}
+          disabled={isSubmitting}
         >
-          <Text style={styles.backToLoginText}>Back to Login</Text>
+          <Text style={[
+            styles.backToLoginText,
+            isSubmitting && styles.disabledText
+          ]}>
+            Back to Login
+          </Text>
         </TouchableOpacity>
       </View>
     </>
@@ -247,32 +331,64 @@ const SignupScreen: React.FC<SignupScreenProps> = () => {
           Enter the 6-digit code sent to your email{'\n'}to verify your account.
         </Text>
       </View>
+
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Verification Code</Text>
-        <TextInput
-          style={styles.input}
-          value={verificationCode}
-          onChangeText={setVerificationCode}
-          placeholder="Enter 6-digit code"
-          placeholderTextColor="#9ca3af"
-          keyboardType="numeric"
-          maxLength={6}
-          autoCorrect={false}
+        <Controller
+          control={verificationControl}
+          name="verificationCode"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={[
+                styles.verificationInput,
+                verificationErrors.verificationCode && styles.inputError
+              ]}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              placeholder="Enter 6-digit code"
+              placeholderTextColor="#9ca3af"
+              keyboardType="numeric"
+              maxLength={6}
+              autoCorrect={false}
+              editable={!isSubmitting}
+            />
+          )}
         />
+        {verificationErrors.verificationCode && (
+          <Text style={styles.errorText}>{getVerificationErrorMessage('verificationCode')}</Text>
+        )}
       </View>
+
       <TouchableOpacity
-        style={styles.loginButton}
-        onPress={handleVerifyCode}
+        style={[
+          styles.loginButton,
+          (!isVerificationValid || !isVerificationDirty || isSubmitting) && styles.loginButtonDisabled
+        ]}
+        onPress={handleVerificationSubmit(handleVerifyCode)}
         activeOpacity={0.8}
+        disabled={!isVerificationValid || !isVerificationDirty || isSubmitting}
       >
-        <Text style={styles.loginButtonText}>Verify</Text>
+        <Text style={[
+          styles.loginButtonText,
+          (!isVerificationValid || !isVerificationDirty || isSubmitting) && styles.loginButtonTextDisabled
+        ]}>
+          {isSubmitting ? 'Verifying...' : 'Verify'}
+        </Text>
       </TouchableOpacity>
+
       <View style={styles.signupFooter}>
         <TouchableOpacity
           onPress={handleBackToLogin}
           activeOpacity={0.7}
+          disabled={isSubmitting}
         >
-          <Text style={styles.backToLoginText}>Back to Login</Text>
+          <Text style={[
+            styles.backToLoginText,
+            isSubmitting && styles.disabledText
+          ]}>
+            Back to Login
+          </Text>
         </TouchableOpacity>
       </View>
     </>

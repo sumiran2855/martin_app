@@ -1,0 +1,162 @@
+import { StyleSheet, Dimensions, Platform } from 'react-native';
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const SIDEBAR_WIDTH = SCREEN_WIDTH * 0.80; // 80% of screen width
+
+export default StyleSheet.create({
+  overlay: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  sidebar: {
+    width: SIDEBAR_WIDTH,
+    height: SCREEN_HEIGHT,
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2,
+      height: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 8,
+    flexDirection: 'column',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+  },
+  sidebarHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingBottom: 20,
+    backgroundColor: '#f8f9fa',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e9ecef',
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sidebarTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#1a5490',
+    marginLeft: 12,
+  },
+  closeButton: {
+    padding: 4,
+  },
+  userSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+    backgroundColor: '#ffffff',
+  },
+  userAvatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#e3f2fd',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  userInfo: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 4,
+  },
+  userEmail: {
+    fontSize: 14,
+    color: '#666',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#e9ecef',
+    marginHorizontal: 20,
+  },
+  menuSection: {
+    flex: 1, 
+    paddingTop: 8,
+    paddingBottom: 8, 
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    marginHorizontal: 8,
+    marginVertical: 2,
+    borderRadius: 12,
+  },
+  menuItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  menuIcon: {
+    marginRight: 16,
+    width: 24,
+  },
+  menuText: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+    flex: 1,
+  },
+  badge: {
+    backgroundColor: '#FF3B30',
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginRight: 8,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  badgeText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  sidebarFooter: {
+    paddingHorizontal: 20,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 20, 
+    borderTopWidth: 1,
+    borderTopColor: '#e9ecef',
+    paddingTop: 20,
+    backgroundColor: '#ffffff', 
+  },
+  footerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    paddingBottom: 50,
+  },
+  footerText: {
+    fontSize: 16,
+    color: '#FF3B30',
+    fontWeight: '500',
+    marginLeft: 12,
+  },
+  profileImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    resizeMode: 'cover',
+  },
+});

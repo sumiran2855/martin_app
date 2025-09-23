@@ -4,6 +4,8 @@ import PortalSelectionScreen from '../screens/PortalSelectionScreen';
 import LoginScreen from '../screens/authScreens/LoginScreen';
 import ForgotPasswordScreen from '../screens/authScreens/ForgetPasswordScreen';
 import SignupScreen from '../screens/authScreens/SignupScreen';
+import ProductDashboardScreen from '../screens/Product_portal/DashboardScreen';
+import ServiceDashboardScreen from '../screens/Service_portal/DashboardScreen';
 
 export type PortalType = 'PRODUCT' | 'SERVICE';
 
@@ -12,6 +14,8 @@ export type RootStackParamList = {
   Login: { portalType: PortalType };
   ForgotPassword: { portalType: PortalType };
   SignUp: { portalType: PortalType };
+  ProductDashboard: undefined;
+  ServiceDashboard: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -37,6 +41,16 @@ export default function AppNavigator() {
       <Stack.Screen
         name="SignUp"
         component={SignupScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ProductDashboard"
+        component={ProductDashboardScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ServiceDashboard"
+        component={ServiceDashboardScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

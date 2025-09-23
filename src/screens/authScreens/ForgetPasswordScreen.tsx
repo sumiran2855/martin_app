@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -8,47 +8,46 @@ import {
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Controller } from 'react-hook-form';
 import { styles } from './LoginScreen.styles';
-import { useNavigation } from '@react-navigation/native';
+import { useForgotPasswordLogic } from '../../hooks/useForgetPassword';
 
-interface ForgetPasswordScreenProps { }
+interface ForgotPasswordScreenProps {}
 
-const ForgetPasswordScreen: React.FC<ForgetPasswordScreenProps> = () => {
-  const [email, setEmail] = useState<string>('');
-  const [verificationCode, setVerificationCode] = useState<string>('');
-  const [newPassword, setNewPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [isNewPasswordVisible, setIsNewPasswordVisible] = useState<boolean>(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false);
-  const [currentStep, setCurrentStep] = useState<'email' | 'verification'>('email');
-  const navigation = useNavigation();
+const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = () => {
+  const {
+    // State
+    isNewPasswordVisible,
+    isConfirmPasswordVisible,
+    currentStep,
+    isSubmitting,
+    verificationCode,
+    setVerificationCode,
+    verificationError,
 
-  const handleSendEmail = (): void => {
-    console.log('Send email pressed', { email });
-    setCurrentStep('verification');
-  };
+    // Email form
+    emailControl,
+    handleEmailSubmit,
+    emailErrors,
+    isEmailValid,
+    isEmailDirty,
 
-  const handleVerifyAndReset = (): void => {
-    console.log('Verify and reset pressed', { 
-      email, 
-      verificationCode, 
-      newPassword, 
-      confirmPassword 
-    });
-    (navigation as any).navigate('Login');
-  };
+    // Reset form
+    resetControl,
+    handleResetSubmit,
+    resetErrors,
+    isResetValid,
+    isResetDirty,
 
-  const handleBackToLogin = (): void => {
-    (navigation as any).navigate('Login');
-  };
-
-  const toggleNewPasswordVisibility = (): void => {
-    setIsNewPasswordVisible(!isNewPasswordVisible);
-  };
-
-  const toggleConfirmPasswordVisibility = (): void => {
-    setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
-  };
+    // Handlers
+    handleSendEmail,
+    handleVerifyAndReset,
+    handleBackToLogin,
+    toggleNewPasswordVisibility,
+    toggleConfirmPasswordVisibility,
+    getEmailErrorMessage,
+    getResetErrorMessage,
+  } = useForgotPasswordLogic();
 
   const renderEmailStep = () => (
     <>
@@ -66,24 +65,47 @@ const ForgetPasswordScreen: React.FC<ForgetPasswordScreenProps> = () => {
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Enter your email"
-          placeholderTextColor="#9ca3af"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          autoCorrect={false}
+        <Controller
+          control={emailControl}
+          name="email"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={[
+                styles.input,
+                emailErrors.email && styles.inputError
+              ]}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              placeholder="Enter your email"
+              placeholderTextColor="#9ca3af"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!isSubmitting}
+            />
+          )}
         />
+        {emailErrors.email && (
+          <Text style={styles.errorText}>{getEmailErrorMessage('email')}</Text>
+        )}
       </View>
 
       <TouchableOpacity
-        style={styles.loginButton}
-        onPress={handleSendEmail}
+        style={[
+          styles.loginButton,
+          (!isEmailValid || !isEmailDirty || isSubmitting) && styles.loginButtonDisabled
+        ]}
+        onPress={handleEmailSubmit(handleSendEmail)}
         activeOpacity={0.8}
+        disabled={!isEmailValid || !isEmailDirty || isSubmitting}
       >
-        <Text style={styles.loginButtonText}>Send</Text>
+        <Text style={[
+          styles.loginButtonText,
+          (!isEmailValid || !isEmailDirty || isSubmitting) && styles.loginButtonTextDisabled
+        ]}>
+          {isSubmitting ? 'Sending...' : 'Send'}
+        </Text>
       </TouchableOpacity>
 
       <View style={styles.ForgetPasswordfooter}>
@@ -91,12 +113,19 @@ const ForgetPasswordScreen: React.FC<ForgetPasswordScreenProps> = () => {
           <Text style={styles.createAccountText}>Remembered your Password?</Text>
         </TouchableOpacity>
       </View>
+      
       <View style={styles.ForgetPasswordfooter}>
         <TouchableOpacity
           onPress={handleBackToLogin}
           activeOpacity={0.7}
+          disabled={isSubmitting}
         >
-          <Text style={styles.forgotPasswordText}>Back to Login</Text>
+          <Text style={[
+            styles.forgotPasswordText,
+            isSubmitting && styles.disabledText
+          ]}>
+            Back to Login
+          </Text>
         </TouchableOpacity>
       </View>
     </>
@@ -119,7 +148,10 @@ const ForgetPasswordScreen: React.FC<ForgetPasswordScreenProps> = () => {
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Verification Code</Text>
         <TextInput
-          style={styles.verificationInput}
+          style={[
+            styles.verificationInput,
+            verificationError && styles.inputError
+          ]}
           value={verificationCode}
           onChangeText={setVerificationCode}
           placeholder="Enter 6-digit code"
@@ -127,73 +159,124 @@ const ForgetPasswordScreen: React.FC<ForgetPasswordScreenProps> = () => {
           keyboardType="numeric"
           maxLength={6}
           autoCorrect={false}
+          editable={!isSubmitting}
         />
+        {verificationError && (
+          <Text style={styles.errorText}>{verificationError}</Text>
+        )}
       </View>
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>New Password</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            value={newPassword}
-            onChangeText={setNewPassword}
-            placeholder="Enter new password"
-            placeholderTextColor="#9ca3af"
-            secureTextEntry={!isNewPasswordVisible}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          <TouchableOpacity
-            style={styles.eyeButton}
-            onPress={toggleNewPasswordVisibility}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.eyeIcon}>
-              {isNewPasswordVisible ? '👁️' : '👁️‍🗨️'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <Controller
+          control={resetControl}
+          name="newPassword"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={[
+                  styles.passwordInput,
+                  resetErrors.newPassword && styles.inputError
+                ]}
+                value={value || ''}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="Enter new password"
+                placeholderTextColor="#9ca3af"
+                secureTextEntry={!isNewPasswordVisible}
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="off"
+                editable={!isSubmitting}
+              />
+              <TouchableOpacity
+                style={styles.eyeButton}
+                onPress={toggleNewPasswordVisibility}
+                activeOpacity={0.7}
+                disabled={isSubmitting}
+              >
+                <Text style={styles.eyeIcon}>
+                  {isNewPasswordVisible ? '👁️' : '👁️‍🗨️'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+        {resetErrors.newPassword && (
+          <Text style={styles.errorText}>{getResetErrorMessage('newPassword')}</Text>
+        )}
       </View>
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Confirm Password</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            placeholder="Confirm new password"
-            placeholderTextColor="#9ca3af"
-            secureTextEntry={!isConfirmPasswordVisible}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          <TouchableOpacity
-            style={styles.eyeButton}
-            onPress={toggleConfirmPasswordVisibility}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.eyeIcon}>
-              {isConfirmPasswordVisible ? '👁️' : '👁️‍🗨️'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <Controller
+          control={resetControl}
+          name="confirmPassword"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={[
+                  styles.passwordInput,
+                  resetErrors.confirmPassword && styles.inputError
+                ]}
+                value={value || ''}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="Confirm new password"
+                placeholderTextColor="#9ca3af"
+                secureTextEntry={!isConfirmPasswordVisible}
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="off"
+                editable={!isSubmitting}
+              />
+              <TouchableOpacity
+                style={styles.eyeButton}
+                onPress={toggleConfirmPasswordVisibility}
+                activeOpacity={0.7}
+                disabled={isSubmitting}
+              >
+                <Text style={styles.eyeIcon}>
+                  {isConfirmPasswordVisible ? '👁️' : '👁️‍🗨️'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+        {resetErrors.confirmPassword && (
+          <Text style={styles.errorText}>{getResetErrorMessage('confirmPassword')}</Text>
+        )}
       </View>
 
       <TouchableOpacity
-        style={styles.loginButton}
-        onPress={handleVerifyAndReset}
+        style={[
+          styles.loginButton,
+          (!isResetValid || !isResetDirty || isSubmitting) && styles.loginButtonDisabled
+        ]}
+        onPress={handleResetSubmit(handleVerifyAndReset)}
         activeOpacity={0.8}
+        disabled={!isResetValid || !isResetDirty || isSubmitting}
       >
-        <Text style={styles.loginButtonText}>Reset Password</Text>
+        <Text style={[
+          styles.loginButtonText,
+          (!isResetValid || !isResetDirty || isSubmitting) && styles.loginButtonTextDisabled
+        ]}>
+          {isSubmitting ? 'Resetting Password...' : 'Reset Password'}
+        </Text>
       </TouchableOpacity>
 
       <View style={styles.ForgetPasswordfooter}>
         <TouchableOpacity
           onPress={handleBackToLogin}
           activeOpacity={0.7}
+          disabled={isSubmitting}
         >
-          <Text style={styles.forgotPasswordText}>Back to Login</Text>
+          <Text style={[
+            styles.forgotPasswordText,
+            isSubmitting && styles.disabledText
+          ]}>
+            Back to Login
+          </Text>
         </TouchableOpacity>
       </View>
     </>
@@ -215,4 +298,4 @@ const ForgetPasswordScreen: React.FC<ForgetPasswordScreenProps> = () => {
   );
 };
 
-export default ForgetPasswordScreen;
+export default ForgotPasswordScreen;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -6,93 +6,41 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller } from 'react-hook-form';
 import { styles } from './LoginScreen.styles';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../navigation/AppNavigator';
 import { HorizontalScrollLanguageSelector } from '../../components/common/LanguageSelector';
 import { languageStyles } from '../../components/common/LanguageSelector.styles';
-import { loginSchema, LoginFormData, loginDefaultValues } from '../../validations/LoginValidation';
+import { useLoginLogic, PORTAL_TITLES } from '../../hooks/useLogin';
 
-interface LoginScreenProps { }
-
-type LoginRouteProp = RouteProp<RootStackParamList, 'Login'>;
-
-const PORTAL_TITLES = {
-  PRODUCT: 'EC POWER PRODUCT PORTAL',
-  SERVICE: 'EC POWER SERVICE DATABASE',
-};
+interface LoginScreenProps {}
 
 const LoginScreen: React.FC<LoginScreenProps> = () => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<string>('en');
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const navigation = useNavigation();
-  const route = useRoute<LoginRouteProp>();
-  const portalType = route.params?.portalType || 'PRODUCT';
-
   const {
+    // State
+    isPasswordVisible,
+    selectedLanguage,
+    isSubmitting,
+    portalType,
+    rememberMe,
+    
+    // Form
     control,
     handleSubmit,
-    formState: { errors, isValid, isDirty },
-    watch,
-    setValue,
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: loginDefaultValues,
-    mode: 'onChange',
-  });
-
-  const rememberMe = watch('rememberMe');
-
-  const handleLogin = async (data: LoginFormData): Promise<void> => {
-    if (isSubmitting) return;
-
-    setIsSubmitting(true);
-
-    try {
-      console.log('Login pressed', {
-        ...data,
-        portalType,
-        language: selectedLanguage
-      });
-      await new Promise((resolve: any) => setTimeout(resolve, 1000));
-
-    } catch (error) {
-      console.error('Login error:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleForgotPassword = (): void => {
-    (navigation as any).navigate('ForgotPassword', { portalType });
-  };
-
-  const handleCreateAccount = (): void => {
-    (navigation as any).navigate('SignUp', { portalType });
-  };
-
-  const togglePasswordVisibility = (): void => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
-
-  const toggleRememberMe = (): void => {
-    setValue('rememberMe', !rememberMe, { shouldValidate: true });
-  };
-
-  const handleLanguageChange = (languageCode: string): void => {
-    setSelectedLanguage(languageCode);
-  };
-
-  // Helper function to get error message
-  const getErrorMessage = (fieldName: keyof LoginFormData): string | undefined => {
-    return errors[fieldName]?.message;
-  };
+    errors,
+    isValid,
+    isDirty,
+    
+    // Handlers
+    handleLogin,
+    handleForgotPassword,
+    handleCreateAccount,
+    togglePasswordVisibility,
+    toggleRememberMe,
+    handleLanguageChange,
+    getErrorMessage,
+  } = useLoginLogic();
 
   return (
     <>
@@ -103,6 +51,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
           <View style={styles.backgroundBottom} />
 
           <View style={styles.form}>
+            {/* Header */}
             <View style={styles.header}>
               <Image
                 source={require('../../assets/logo.png')}
@@ -242,10 +191,13 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
                 isSubmitting && styles.disabledText
               ]}>
                 Don't have an account?
-                <Text style={[
-                  styles.createAccountLink,
-                  isSubmitting && styles.disabledText
-                ]} onPress={handleCreateAccount}> Create Account</Text>
+                <Text 
+                  style={[
+                    styles.createAccountLink,
+                    isSubmitting && styles.disabledText
+                  ]} 
+                  onPress={handleCreateAccount}
+                > Create Account</Text>
               </Text>
             </TouchableOpacity>
 
@@ -255,7 +207,6 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
               onLanguageChange={handleLanguageChange}
               styles={languageStyles}
             />
-
           </View>
         </View>
       </SafeAreaView>
