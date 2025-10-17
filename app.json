@@ -26,7 +26,6 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
       [
         "expo-splash-screen",
         {
@@ -41,8 +40,12 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "281b0ff4-31b1-4d0c-8b10-9377230ffe61"
+      }
+    },
+    "owner": "sumiran.b"
   }
 }

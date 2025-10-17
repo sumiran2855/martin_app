@@ -1,0 +1,233 @@
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
+  content: {
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    maxWidth: width > 768 ? 600 : width - 40,
+    alignSelf: 'center',
+    width: '100%',
+  },
+  header: {
+    marginBottom: 30,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#1a365d',
+    marginBottom: 12,
+    lineHeight: 30,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#4a5568',
+    lineHeight: 22,
+  },
+  section: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#2d3748',
+    marginBottom: 20,
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#2d3748',
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    backgroundColor: '#ffffff',
+    color: '#2d3748',
+    minHeight: 48,
+  },
+  inputWithIcon: {
+    position: 'relative',
+  },
+  infoIcon: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#e2e8f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  infoIconText: {
+    fontSize: 14,
+    color: '#4a5568',
+    fontWeight: '600',
+  },
+  dropdown: {
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#ffffff',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 48,
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: '#2d3748',
+  },
+  placeholderText: {
+    color: '#999',
+  },
+  dropdownArrow: {
+    fontSize: 12,
+    color: '#4a5568',
+  },
+  dropdownMenu: {
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+    marginTop: 4,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    maxHeight: 200,
+  },
+  dropdownItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f7fafc',
+  },
+  dropdownItemText: {
+    fontSize: 16,
+    color: '#2d3748',
+  },
+  example: {
+    fontSize: 14,
+    color: '#718096',
+    marginTop: 4,
+    fontStyle: 'italic',
+  },
+  helperText: {
+    fontSize: 14,
+    color: '#718096',
+    marginTop: 6,
+    lineHeight: 18,
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+  },
+  optionButton: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+  },
+  optionButtonSelected: {
+    backgroundColor: '#3182ce',
+    borderColor: '#3182ce',
+  },
+  optionButtonText: {
+    fontSize: 16,
+    color: '#4a5568',
+    fontWeight: '500',
+  },
+  optionButtonTextSelected: {
+    color: '#ffffff',
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 30,
+    paddingHorizontal: 4,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: '#e2e8f0',
+    borderRadius: 4,
+    marginRight: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+  },
+  checkboxChecked: {
+    backgroundColor: '#3182ce',
+    borderColor: '#3182ce',
+  },
+  checkmark: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  checkboxLabel: {
+    fontSize: 16,
+    color: '#2d3748',
+    fontWeight: '500',
+  },
+  addButton: {
+    backgroundColor: '#1a365d',
+    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  addButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+});
+
+export default styles;
