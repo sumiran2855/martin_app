@@ -1,4 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export const portalStyles = StyleSheet.create({
   container: {
@@ -24,13 +26,13 @@ export const portalStyles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: SCREEN_WIDTH * 0.06,
     zIndex: 1,
   },
   form: {
     backgroundColor: '#ffffff',
     borderRadius: 16,
-    padding: 24,
+    padding: SCREEN_WIDTH * 0.06,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -42,11 +44,11 @@ export const portalStyles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: SCREEN_HEIGHT * 0.05,
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: SCREEN_WIDTH * 0.2,
+    height: SCREEN_WIDTH * 0.2,
     marginBottom: 16,
   },
   title: {

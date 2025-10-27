@@ -1,9 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
+import { ComponentProps } from 'react';
+import { MaterialIcons } from '@expo/vector-icons';
 
 interface MenuItem {
   id: string;
   title: string;
-  icon: string;
+  icon: ComponentProps<typeof MaterialIcons>['name'];
   badge?: string;
 }
 

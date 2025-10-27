@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import Icon from "react-native-vector-icons/MaterialIcons";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons as Icon } from "@expo/vector-icons";
 import useDashboard from '../../hooks/useDashboard';
 import Sidebar from '../common/Sidebar';
 import styles from './DashboardScreen.styles';
@@ -61,7 +62,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
       {/* Top Navigation */}
@@ -102,12 +103,12 @@ const DashboardScreen: React.FC<DashboardScreenProps> = () => {
             style={styles.sortButton}
             onPress={() => setDropdownVisible(!dropdownVisible)}
           >
-            <Text style={styles.sortText}>Sort by: {selectedFilter}</Text>
+            <Text style={styles.sortText}>Sort by :</Text>
             <Text style={[styles.dropdownIcon, dropdownVisible && styles.dropdownIconRotated]}>▼</Text>
           </TouchableOpacity>
 
           {dropdownVisible && (
-            <View style={styles.dropdownMenu}>
+            <ScrollView style={styles.dropdownMenu} nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
               {filterOptions.map((option) => (
                 <TouchableOpacity
                   key={option.value}
@@ -128,7 +129,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = () => {
                   )}
                 </TouchableOpacity>
               ))}
-            </View>
+            </ScrollView>
           )}
         </View>
 
@@ -189,7 +190,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = () => {
         onClose={() => setSidebarVisible(false)}
         onMenuItemPress={handleSidebarMenuPress}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

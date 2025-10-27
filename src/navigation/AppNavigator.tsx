@@ -4,10 +4,11 @@ import React from 'react';
 import ForgotPasswordScreen from '../screens/authScreens/ForgetPasswordScreen';
 import LoginScreen from '../screens/authScreens/LoginScreen';
 import SignupScreen from '../screens/authScreens/SignupScreen';
-import PortalSelectionScreen from '../screens/PortalSelectionScreen';
+// import PortalSelectionScreen from '../screens/PortalSelectionScreen';
 import RegisterScreen from '../screens/Product_portal/Components/RegisterScreen';
 import ProductDashboardScreen from '../screens/Product_portal/DashboardScreen';
 import ServiceDashboardScreen from '../screens/Service_portal/DashboardScreen';
+import StepperScreen from '../screens/authScreens/StepperScreen';
 
 export type PortalType = 'PRODUCT' | 'SERVICE';
 
@@ -19,6 +20,7 @@ export type RootStackParamList = {
   ProductDashboard: undefined;
   ServiceDashboard: undefined;
   Register: undefined;
+  Stepper: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -26,12 +28,12 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="PortalSelection">
-      <Stack.Screen
+      <Stack.Navigator initialRouteName="Login">
+      {/* <Stack.Screen
         name="PortalSelection"
         component={PortalSelectionScreen}
         options={{ headerShown: false }}
-      />
+      /> */}
       <Stack.Screen
         name="Login"
         component={LoginScreen}
@@ -60,6 +62,11 @@ export default function AppNavigator() {
       <Stack.Screen 
         name="Register"
         component={RegisterScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Stepper"
+        component={StepperScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

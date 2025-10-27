@@ -1,7 +1,7 @@
 import React from 'react';
-import { Image, Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Icon from "react-native-vector-icons/MaterialIcons";
+import { MaterialIcons as Icon } from "@expo/vector-icons";
 import useSidebar, { MenuItem } from '../../hooks/useSidebar';
 import styles from './Sidebar.styles';
 
@@ -75,12 +75,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onMenuItemPress }
           <View style={styles.divider} />
 
           {/* Menu Items */}
-          <View style={styles.menuSection}>
+          <ScrollView 
+            style={styles.menuSection}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.menuContentContainer}
+          >
             {menuItems.map(renderMenuItem)}
-          </View>
+          </ScrollView>
 
           {/* Footer */}
-          <SafeAreaView style={styles.sidebarFooter}>
+          <SafeAreaView style={styles.sidebarFooter} edges={['bottom']}>
             <TouchableOpacity style={styles.footerItem} onPress={handleLogout} activeOpacity={0.7}>
               <Icon name="logout" size={20} color="#FF3B30" />
               <Text style={styles.footerText}>Sign Out</Text>

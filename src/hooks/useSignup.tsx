@@ -85,7 +85,8 @@ export const useSignupLogic = () => {
       });
       // Simulate API call
       await new Promise((resolve:any) => setTimeout(resolve, 1000));
-      (navigation as any).navigate({ name: 'Login', params: { portalType: 'user' } });
+      // Navigate to StepperScreen after successful verification
+      navigation.navigate('Stepper' as never);
     } catch (error) {
       console.error('Verification error:', error);
     } finally {
