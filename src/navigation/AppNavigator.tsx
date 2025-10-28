@@ -4,11 +4,11 @@ import React from 'react';
 import ForgotPasswordScreen from '../screens/authScreens/ForgetPasswordScreen';
 import LoginScreen from '../screens/authScreens/LoginScreen';
 import SignupScreen from '../screens/authScreens/SignupScreen';
-// import PortalSelectionScreen from '../screens/PortalSelectionScreen';
 import RegisterScreen from '../screens/Product_portal/Components/RegisterScreen';
-import ProductDashboardScreen from '../screens/Product_portal/DashboardScreen';
+import XRGI_System from '../screens/Product_portal/XRGI-System';
 import ServiceDashboardScreen from '../screens/Service_portal/DashboardScreen';
 import StepperScreen from '../screens/authScreens/StepperScreen';
+import HomeScreen from '../screens/common/HomeScreen';
 
 export type PortalType = 'PRODUCT' | 'SERVICE';
 
@@ -21,6 +21,7 @@ export type RootStackParamList = {
   ServiceDashboard: undefined;
   Register: undefined;
   Stepper: undefined;
+  Home: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -29,11 +30,6 @@ export default function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-      {/* <Stack.Screen
-        name="PortalSelection"
-        component={PortalSelectionScreen}
-        options={{ headerShown: false }}
-      /> */}
       <Stack.Screen
         name="Login"
         component={LoginScreen}
@@ -51,7 +47,7 @@ export default function AppNavigator() {
       />
       <Stack.Screen
         name="ProductDashboard"
-        component={ProductDashboardScreen}
+        component={XRGI_System}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -67,6 +63,11 @@ export default function AppNavigator() {
       <Stack.Screen
         name="Stepper"
         component={StepperScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

@@ -2,25 +2,28 @@ import React from 'react';
 import { Image, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons as Icon } from "@expo/vector-icons";
+import { useNavigation } from '@react-navigation/native';
 import useDashboard from '../../hooks/useDashboard';
 import Sidebar from '../common/Sidebar';
-import styles from './DashboardScreen.styles';
+import styles from './XRGI-System.styles';
 
-interface DashboardScreenProps { }
+// const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const DashboardScreen: React.FC<DashboardScreenProps> = () => {
+interface XRGI_SystemProps { }
 
-  const { 
+const XRGI_System: React.FC<XRGI_SystemProps> = () => {
+  const navigation = useNavigation();
+  const {
     // State
     selectedFilter,
     dropdownVisible,
     searchQuery,
     sidebarVisible,
-    
+
     // Data
     filterOptions,
     filteredCards,
-    
+
     // Functions
     setDropdownVisible,
     setSidebarVisible,
@@ -29,6 +32,10 @@ const DashboardScreen: React.FC<DashboardScreenProps> = () => {
     handleSidebarMenuPress,
     handleRegisterXRGI,
   } = useDashboard();
+
+  const handleBackPress = () => {
+    navigation.goBack();
+  };
 
 
   const renderCard = (item: any) => (
@@ -65,15 +72,15 @@ const DashboardScreen: React.FC<DashboardScreenProps> = () => {
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
-      {/* Top Navigation */}
-      <View style={styles.topNav}>
-        <TouchableOpacity style={styles.appIcon} onPress={() => setSidebarVisible(true)}>
-          {/* <Image source={require('../../assets/logo.png')} style={styles.logoImage} /> */}
-          <Icon name="format-list-bulleted" size={24} color="#000" />
+      {/* Header with Back Button */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={handleBackPress}
+          activeOpacity={0.7}
+        >
+          <Icon name="arrow-back" size={24} color="#1a5490" />
         </TouchableOpacity>
-        <View style={styles.profileIcon}>
-          <Image source={require('../../../assets/profile.jpeg')} style={styles.profileImage} />
-        </View>
       </View>
 
       {/* Title Section */}
@@ -194,4 +201,4 @@ const DashboardScreen: React.FC<DashboardScreenProps> = () => {
   );
 };
 
-export default DashboardScreen;
+export default XRGI_System;

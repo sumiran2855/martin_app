@@ -7,11 +7,6 @@ import { loginSchema, LoginFormData, loginDefaultValues } from '../validations/L
 
 type LoginRouteProp = RouteProp<RootStackParamList, 'Login'>;
 
-export const PORTAL_TITLES = {
-  PRODUCT: 'EC POWER PRODUCT PORTAL',
-  SERVICE: 'EC POWER SERVICE DATABASE',
-};
-
 export const useLoginLogic = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>('en');
@@ -43,8 +38,7 @@ export const useLoginLogic = () => {
 
     try {
       await new Promise((resolve: any) => setTimeout(resolve, 1000));
-      const targetDashboard = portalType === 'SERVICE' ? 'ServiceDashboard' : 'ProductDashboard';
-      (navigation as any).navigate(targetDashboard as never);
+      (navigation as any).navigate('Home');
     } catch (error) {
       console.error('Login error:', error);
     } finally {

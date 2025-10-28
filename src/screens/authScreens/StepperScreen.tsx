@@ -9,13 +9,14 @@ import {
     KeyboardAvoidingView,
     Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../navigation/AppNavigator';
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import { styles } from './StepperScreen.styles';
 import { FormData, countryCodes, models, industries, country } from './types';
 
 const StepperScreen: React.FC = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [currentStep, setCurrentStep] = useState(1);
     const [showCountryCodePicker, setShowCountryCodePicker] = useState(false);
     const [showContactCountryCodePicker, setShowContactCountryCodePicker] = useState(false);
@@ -188,6 +189,8 @@ const StepperScreen: React.FC = () => {
             setCurrentStep(currentStep + 1);
         } else {
             console.log('Form completed:', formData);
+            // Navigate to HomeScreen after form completion
+            navigation.navigate('Home');
         }
     };
 

@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { HorizontalScrollLanguageSelector } from '../../components/common/LanguageSelector';
 import { languageStyles } from '../../components/common/LanguageSelector.styles';
-import { PORTAL_TITLES, useLoginLogic } from '../../hooks/useLogin';
+import { useLoginLogic } from '../../hooks/useLogin';
 import { styles } from './LoginScreen.styles';
 
 interface LoginScreenProps {}
@@ -58,7 +58,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
                 style={styles.logo}
                 resizeMode="contain"
               />
-              <Text style={styles.title}>{PORTAL_TITLES[portalType]}</Text>
+              <Text style={styles.title}>LOGIN</Text>
               <Text style={styles.subtitle}>
                 Enter your username and password{'\n'}to sign in your account
               </Text>
