@@ -196,6 +196,7 @@ export const styles = StyleSheet.create({
     left: 14,
     top: 15,
     zIndex: 1,
+    marginTop: 2,
   },
   input: {
     height: 50,
@@ -384,8 +385,9 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: '#334155',
-    marginBottom: 12,
+    marginVertical: 12,
     lineHeight: 22,
+
   },
 
   // Divider
@@ -799,5 +801,14 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     position: 'relative',
+  },
+  inputError: {
+    borderColor: '#ef4444',
+    borderWidth: 1,
+    backgroundColor: '#fef2f2',
+  },
+  textAreaContainer: {
+    minHeight: 100,
+    alignItems: 'flex-start',
   },
 });

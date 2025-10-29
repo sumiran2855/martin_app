@@ -56,7 +56,7 @@ export const signupSchema = z.object({
     phoneNumber: z
         .string()
         .min(1, 'Phone number is required')
-        .min(5, 'Phone number must be at least 5 digits')
+        .min(8, 'Phone number must be at least 8 digits')
         .max(15, 'Phone number must not exceed 15 digits')
         .regex(/^\d+$/, 'Phone number can only contain digits'),
     password: z

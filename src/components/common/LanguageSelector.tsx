@@ -12,6 +12,7 @@ const LANGUAGES = [
   { label: 'Danish', value: 'da', flag: '🇩🇰' },
   { label: 'Italian', value: 'it', flag: '🇮🇹' },
   { label: 'French', value: 'fr', flag: '🇫🇷' },
+  { label: 'Polish', value: 'pl', flag: '🇵🇱' },
 ];
 
 export const HorizontalScrollLanguageSelector = ({ selectedLanguage, onLanguageChange, styles }:any) => {

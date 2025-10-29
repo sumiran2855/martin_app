@@ -1,23 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-type RootStackParamList = {
-  Installation: { formData: Omit<FormData, 'distributeHoursEvenly'> };
-  // Add other screen params as needed
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Installation'>;
+import React, { useState } from 'react';
+import { Alert, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import styles from './RegisterScreen.styles';
+import { FormData } from '../../authScreens/types';
+import { RootStackParamList } from '../../../navigation/AppNavigator';
 
-// Types
-interface MonthlyDistribution {
-  month: string;
-  percentage: string;
-  hours: string;
-}
+type RegisterScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface CountryCode {
   flag: string;
@@ -25,48 +15,31 @@ interface CountryCode {
   country: string;
 }
 
-interface FormData {
-  systemName: string;
-  xrgiIdNumber: string;
-  selectedModel: string;
-  systemAddress: string;
-  systemPostcode: string;
-  systemCity: string;
-  systemCountry: string;
-  hasServiceContract: boolean | null;
-  serviceProviderName: string;
-  serviceProviderEmail: string;
-  serviceProviderPhone: string;
-  serviceCountryCode: string;
-  isSalesPartnerSame: boolean | null;
-  salesPartnerName: string;
-  salesPartnerEmail: string;
-  salesPartnerPhone: string;
-  salesCountryCode: string;
-  isSystemInstalled: boolean;
-  energyCheckPlus: boolean;
-  expectedAnnualSavings: string;
-  expectedCO2Savings: string;
-  expectedOperatingHours: string;
-  industry: string;
-  recipientEmails: string;
-  distributeHoursEvenly: boolean;
-  monthlyDistribution: MonthlyDistribution[];
-  installSmartPrice: boolean;
-  installationTiming: string;
-}
-
 const RegisterScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<RegisterScreenNavigationProp>();
 
   // Dropdown states
   const [showModelPicker, setShowModelPicker] = useState(false);
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const [showServiceCountryCodePicker, setShowServiceCountryCodePicker] = useState(false);
   const [showSalesCountryCodePicker, setShowSalesCountryCodePicker] = useState(false);
+  const [showIndustryPicker, setShowIndustryPicker] = useState(false);
 
   // Form data
-  const [formData, setFormData] = useState<Omit<FormData, 'distributeHoursEvenly'>>({
+  const [formData, setFormData] = useState<FormData>({
+    companyName: '',
+    vatNo: '',
+    address: '',
+    postcode: '',
+    city: '',
+    email: '',
+    phone: '',
+    firstName: '',
+    lastName: '',
+    contactEmail: '',
+    contactPhone: '',
+    countryCode: '+1',
+    contactCountryCode: '+1',
     systemName: '',
     xrgiIdNumber: '',
     selectedModel: '',
@@ -75,6 +48,7 @@ const RegisterScreen: React.FC = () => {
     systemCity: '',
     systemCountry: '',
     hasServiceContract: null,
+    interestedInServiceContract: null,
     serviceProviderName: '',
     serviceProviderEmail: '',
     serviceProviderPhone: '',
@@ -91,22 +65,23 @@ const RegisterScreen: React.FC = () => {
     expectedOperatingHours: '',
     industry: '',
     recipientEmails: '',
+    distributeHoursEvenly: true,
     monthlyDistribution: [
-      { month: 'January', percentage: '8.33', hours: '0' },
-      { month: 'February', percentage: '8.33', hours: '0' },
-      { month: 'March', percentage: '8.33', hours: '0' },
-      { month: 'April', percentage: '8.33', hours: '0' },
-      { month: 'May', percentage: '8.33', hours: '0' },
-      { month: 'June', percentage: '8.33', hours: '0' },
-      { month: 'July', percentage: '8.33', hours: '0' },
-      { month: 'August', percentage: '8.33', hours: '0' },
-      { month: 'September', percentage: '8.33', hours: '0' },
-      { month: 'October', percentage: '8.33', hours: '0' },
-      { month: 'November', percentage: '8.33', hours: '0' },
-      { month: 'December', percentage: '8.33', hours: '0' },
+      { month: 'January', percentage: '8.33', hours: '0', editable: true },
+      { month: 'February', percentage: '8.33', hours: '0', editable: true },
+      { month: 'March', percentage: '8.33', hours: '0', editable: true },
+      { month: 'April', percentage: '8.33', hours: '0', editable: true },
+      { month: 'May', percentage: '8.33', hours: '0', editable: true },
+      { month: 'June', percentage: '8.33', hours: '0', editable: true },
+      { month: 'July', percentage: '8.33', hours: '0', editable: true },
+      { month: 'August', percentage: '8.33', hours: '0', editable: true },
+      { month: 'September', percentage: '8.33', hours: '0', editable: true },
+      { month: 'October', percentage: '8.33', hours: '0', editable: true },
+      { month: 'November', percentage: '8.33', hours: '0', editable: true },
+      { month: 'December', percentage: '8.33', hours: '0', editable: true },
     ],
     installSmartPrice: false,
-    installationTiming: '',
+    installationTiming: 'asap',
   });
 
   const [monthlyErrors, setMonthlyErrors] = useState<string[]>([]);
@@ -127,8 +102,6 @@ const RegisterScreen: React.FC = () => {
   const updateFormData = (key: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
-
-
 
   const validateStep1 = () => {
     if (!formData.systemName.trim()) {
@@ -176,17 +149,96 @@ const RegisterScreen: React.FC = () => {
     }
   };
 
-    const handleBackPress = () => {
+  const handleBackPress = () => {
     navigation.goBack();
   };
 
   const Icon = MaterialIcons;
 
+  const distributeHoursEvenly = () => {
+    const totalHours = parseFloat(formData.expectedOperatingHours) || 0;
+    const hoursPerMonth = totalHours / 12;
+    const percentagePerMonth = (100 / 12);
+
+    const newDistribution = formData.monthlyDistribution.map(month => ({
+      ...month,
+      hours: hoursPerMonth.toFixed(2),
+      percentage: percentagePerMonth.toFixed(2),
+    }));
+
+    setFormData(prev => ({
+      ...prev,
+      monthlyDistribution: newDistribution,
+    }));
+
+    setMonthlyErrors(Array(12).fill(''));
+    setTotalPercentageError('');
+  };
+
+  const validateMonthHours = (hours: number, index: number) => {
+    const errors = [...monthlyErrors];
+    if (hours > 730) {
+      errors[index] = 'Hours cannot exceed 730 per month';
+    } else {
+      errors[index] = '';
+    }
+    setMonthlyErrors(errors);
+  };
+
+  const validateTotalPercentage = () => {
+    const total = formData.monthlyDistribution.reduce((sum, month) => {
+      return sum + (parseFloat(month.percentage) || 0);
+    }, 0);
+
+    if (total > 100) {
+      setTotalPercentageError('Total percentage cannot exceed 100%');
+    } else if (total < 100) {
+      setTotalPercentageError('Total percentage should equal 100%');
+    } else {
+      setTotalPercentageError('');
+    }
+  };
+
+  const updateMonthlyPercentage = (index: number, value: string) => {
+    const totalHours = parseFloat(formData.expectedOperatingHours) || 0;
+    const percentage = parseFloat(value) || 0;
+    const hours = (totalHours * percentage) / 100;
+
+    const newDistribution = [...formData.monthlyDistribution];
+    newDistribution[index] = {
+      ...newDistribution[index],
+      percentage: value,
+      hours: hours.toFixed(2),
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      monthlyDistribution: newDistribution,
+    }));
+
+    validateMonthHours(hours, index);
+    setTimeout(validateTotalPercentage, 0);
+  };
+
+  const calculateTotalHours = () => {
+    const total = formData.monthlyDistribution.reduce((sum, month) => {
+      const hours = parseFloat(month.hours) || 0;
+      return sum + hours;
+    }, 0);
+    return `${total.toFixed(0)}h`;
+  };
+
+  const calculateTotalPercentage = () => {
+    const total = formData.monthlyDistribution.reduce((sum, month) => {
+      const percentage = parseFloat(month.percentage) || 0;
+      return sum + percentage;
+    }, 0);
+    return `${total.toFixed(2)}%`;
+  };
+
   return (
     <View style={styles.container}>
-
-      <ScrollView style={styles.formContainer} showsVerticalScrollIndicator={false}>
-              {/* Header with Back Button */}
+      {/* Update header with centered title */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -195,8 +247,12 @@ const RegisterScreen: React.FC = () => {
         >
           <Icon name="arrow-back" size={24} color="#1a5490" />
         </TouchableOpacity>
+        <Text style={styles.headerTitle}>Register</Text>
+        <View style={styles.backButton} /> {/* Empty view for spacing */}
       </View>
 
+      <ScrollView style={styles.formContainer} showsVerticalScrollIndicator={false}>
+        {/* Header with Back Button */}
         <View style={styles.headerSection}>
           <Text style={styles.title}>Register Your XRGI System</Text>
           <Text style={styles.subtitle}>
@@ -440,11 +496,67 @@ const RegisterScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
+          {/* Show "Interested in Service Contract" question when user selects NO */}
+          {formData.hasServiceContract === false && (
+            <>
+              <View style={styles.divider} />
+              <Text style={styles.questionText}>
+                Are you interested in a service contract?
+              </Text>
+
+              <View style={styles.toggleContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.toggleButton,
+                    styles.toggleButtonLeft,
+                    formData.interestedInServiceContract === true && styles.toggleButtonActive,
+                  ]}
+                  onPress={() => updateFormData('interestedInServiceContract', true)}
+                >
+                  <Icon
+                    name="check-circle"
+                    size={20}
+                    color={formData.interestedInServiceContract === true ? '#fff' : '#999'}
+                  />
+                  <Text
+                    style={[
+                      styles.toggleButtonText,
+                      formData.interestedInServiceContract === true && styles.toggleButtonTextActive,
+                    ]}
+                  >
+                    Yes
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.toggleButton,
+                    styles.toggleButtonRight,
+                    formData.interestedInServiceContract === false && styles.toggleButtonActive,
+                  ]}
+                  onPress={() => updateFormData('interestedInServiceContract', false)}
+                >
+                  <Icon
+                    name="cancel"
+                    size={20}
+                    color={formData.interestedInServiceContract === false ? '#fff' : '#999'}
+                  />
+                  <Text
+                    style={[
+                      styles.toggleButtonText,
+                      formData.interestedInServiceContract === false && styles.toggleButtonTextActive,
+                    ]}
+                  >
+                    No
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+
+          {/* Show service provider details when hasServiceContract is YES */}
           {formData.hasServiceContract === true && (
             <>
               <View style={styles.divider} />
-              <Text style={styles.cardSubtitle}>Service Provider Details</Text>
-
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Service Provider Name *</Text>
                 <View style={styles.inputWrapper}>
@@ -457,6 +569,11 @@ const RegisterScreen: React.FC = () => {
                     onChangeText={(text) => updateFormData('serviceProviderName', text)}
                   />
                 </View>
+                {/* {errors.serviceProviderName && (
+                  <Text style={styles.errorText}>
+                    <Icon name="error-outline" size={12} color="#EF4444" /> {errors.serviceProviderName}
+                  </Text>
+                )} */}
               </View>
 
               <View style={styles.inputGroup}>
@@ -473,6 +590,11 @@ const RegisterScreen: React.FC = () => {
                     onChangeText={(text) => updateFormData('serviceProviderEmail', text)}
                   />
                 </View>
+                {/* {errors.serviceProviderEmail && (
+                  <Text style={styles.errorText}>
+                    <Icon name="error-outline" size={12} color="#EF4444" /> {errors.serviceProviderEmail}
+                  </Text>
+                )} */}
               </View>
 
               <View style={showServiceCountryCodePicker ? styles.inputGroupActive : styles.inputGroup}>
@@ -507,6 +629,11 @@ const RegisterScreen: React.FC = () => {
                     />
                   </View>
                 </View>
+                {/* {errors.serviceProviderPhone && (
+                  <Text style={styles.errorText}>
+                    <Icon name="error-outline" size={12} color="#EF4444" /> {errors.serviceProviderPhone}
+                  </Text>
+                )} */}
 
                 {showServiceCountryCodePicker && (
                   <View style={styles.dropdownOverlay}>
@@ -532,7 +659,12 @@ const RegisterScreen: React.FC = () => {
                   </View>
                 )}
               </View>
+            </>
+          )}
 
+          {/* Show "Is sales partner same" question when hasServiceContract is YES OR interestedInServiceContract is YES */}
+          {(formData.hasServiceContract === true || formData.interestedInServiceContract === true) && (
+            <>
               <View style={styles.divider} />
               <Text style={styles.questionText}>
                 Is your sales partner same as service contract provider?
@@ -585,11 +717,10 @@ const RegisterScreen: React.FC = () => {
                 </TouchableOpacity>
               </View>
 
+              {/* Show sales partner details when isSalesPartnerSame is NO */}
               {formData.isSalesPartnerSame === false && (
                 <>
                   <View style={styles.divider} />
-                  <Text style={styles.cardSubtitle}>Sales Partner Details</Text>
-
                   <View style={styles.inputGroup}>
                     <Text style={styles.label}>Sales Partner Name *</Text>
                     <View style={styles.inputWrapper}>
@@ -602,6 +733,11 @@ const RegisterScreen: React.FC = () => {
                         onChangeText={(text) => updateFormData('salesPartnerName', text)}
                       />
                     </View>
+                    {/* {errors.salesPartnerName && (
+                      <Text style={styles.errorText}>
+                        <Icon name="error-outline" size={12} color="#EF4444" /> {errors.salesPartnerName}
+                      </Text>
+                    )} */}
                   </View>
 
                   <View style={styles.inputGroup}>
@@ -618,6 +754,11 @@ const RegisterScreen: React.FC = () => {
                         onChangeText={(text) => updateFormData('salesPartnerEmail', text)}
                       />
                     </View>
+                    {/* {errors.salesPartnerEmail && (
+                      <Text style={styles.errorText}>
+                        <Icon name="error-outline" size={12} color="#EF4444" /> {errors.salesPartnerEmail}
+                      </Text>
+                    )} */}
                   </View>
 
                   <View style={showSalesCountryCodePicker ? styles.inputGroupActive : styles.inputGroup}>
@@ -652,6 +793,11 @@ const RegisterScreen: React.FC = () => {
                         />
                       </View>
                     </View>
+                    {/* {errors.salesPartnerPhone && (
+                      <Text style={styles.errorText}>
+                        <Icon name="error-outline" size={12} color="#EF4444" /> {errors.salesPartnerPhone}
+                      </Text>
+                    )} */}
 
                     {showSalesCountryCodePicker && (
                       <View style={styles.dropdownOverlay}>
@@ -697,6 +843,258 @@ const RegisterScreen: React.FC = () => {
             </View>
           </TouchableOpacity>
         </View>
+
+        {formData.isSystemInstalled && (
+          <>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Icon name="analytics" size={24} color="#003D82" />
+                <View style={styles.cardHeaderText}>
+                  <Text style={styles.cardTitle}>EnergyCheck Plus</Text>
+                </View>
+              </View>
+              <Text style={styles.cardSubtitle}>
+                Get a monthly overview of how much you have saved with your XRGI System
+              </Text>
+
+              <TouchableOpacity
+                style={styles.featureCard}
+                onPress={() => updateFormData('energyCheckPlus', !formData.energyCheckPlus)}
+              >
+                <View style={[styles.checkbox, formData.energyCheckPlus && styles.checkboxChecked]}>
+                  {formData.energyCheckPlus && <Icon name="check" size={16} color="#fff" />}
+                </View>
+                <View style={styles.checkboxContent}>
+                  <Text style={styles.checkboxLabel}>Enable EnergyCheck Plus</Text>
+                </View>
+              </TouchableOpacity>
+
+              {formData.energyCheckPlus && (
+                <>
+                  <Text style={styles.checkboxDescription}>
+                    We will compare the actual running hours of your XRGI® system to the expected running hours
+                  </Text>
+                  <Text style={styles.checkboxDescription}>
+                    Please find the values in your initial quote* and fill in below
+                  </Text>
+                  <View style={styles.divider} />
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Expected annual savings</Text>
+                    <View style={styles.inputWrapper}>
+                      <Icon name="euro" size={18} color="#999" style={styles.inputIcon} />
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Amount in Euro per year"
+                        placeholderTextColor="#999"
+                        keyboardType="numeric"
+                        value={formData.expectedAnnualSavings}
+                        onChangeText={(text) => updateFormData('expectedAnnualSavings', text)}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Expected annual CO₂ savings</Text>
+                    <View style={styles.inputWrapper}>
+                      <Icon name="eco" size={18} color="#999" style={styles.inputIcon} />
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Total per year"
+                        placeholderTextColor="#999"
+                        keyboardType="numeric"
+                        value={formData.expectedCO2Savings}
+                        onChangeText={(text) => updateFormData('expectedCO2Savings', text)}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Expected operating hours per year</Text>
+                    <View style={styles.inputWrapper}>
+                      <Icon name="schedule" size={18} color="#999" style={styles.inputIcon} />
+                      <TextInput
+                        style={styles.input}
+                        placeholder="0-8760 hours"
+                        placeholderTextColor="#999"
+                        keyboardType="numeric"
+                        maxLength={4}
+                        value={formData.expectedOperatingHours}
+                        onChangeText={(text) => updateFormData('expectedOperatingHours', text)}
+                      />
+                    </View>
+                    <Text style={styles.helperText}>
+                      <Icon name="info-outline" size={12} color="#999" /> Maximum: 8760 hours per year (24h × 365 days)
+                    </Text>
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Industry</Text>
+                    <TouchableOpacity
+                      style={styles.pickerContainer}
+                      onPress={() => setShowIndustryPicker(!showIndustryPicker)}
+                    >
+                      <View style={styles.pickerButton}>
+                        <Icon name="business-center" size={18} color="#999" style={styles.inputIcon} />
+                        <Text style={formData.industry ? styles.pickerText : styles.pickerPlaceholder}>
+                          {formData.industry || 'Select your industry'}
+                        </Text>
+                        <Icon
+                          name={showIndustryPicker ? "expand-less" : "expand-more"}
+                          size={24}
+                          color="#666"
+                        />
+                      </View>
+                    </TouchableOpacity>
+                    {showIndustryPicker && (
+                      <View style={styles.dropdownOverlay}>
+                        {industries.map((industry, idx) => (
+                          <TouchableOpacity
+                            key={industry}
+                            style={[
+                              styles.pickerOption,
+                              idx === industries.length - 1 && styles.pickerOptionLast
+                            ]}
+                            onPress={() => {
+                              updateFormData('industry', industry);
+                              setShowIndustryPicker(false);
+                            }}
+                          >
+                            <Text style={styles.pickerOptionText}>{industry}</Text>
+                            {formData.industry === industry && (
+                              <Text>
+                                <Icon name="check" size={20} color="#00B050" />
+                              </Text>
+                            )}
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    )}
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Recipient Email Address(es)</Text>
+                    <Text style={styles.labelHelper}>You can enter multiple addresses separated by commas</Text>
+                    <View style={styles.inputWrapper}>
+                      <Icon name="email" size={18} color="#999" style={styles.inputIcon} />
+                      <TextInput
+                        style={[styles.input, styles.textArea]}
+                        placeholder="user@example.com, admin@example.com"
+                        placeholderTextColor="#999"
+                        multiline
+                        numberOfLines={3}
+                        textAlignVertical="top"
+                        value={formData.recipientEmails}
+                        onChangeText={(text) => updateFormData('recipientEmails', text)}
+                      />
+                    </View>
+                  </View>
+                </>
+              )}
+            </View>
+
+            {formData.energyCheckPlus && (
+              <View style={styles.card}>
+                <View style={styles.cardHeader}>
+                  <Icon name="calendar-today" size={24} color="#003D82" />
+                  <View style={styles.cardHeaderText}>
+                    <Text style={styles.cardTitle}>Adjust Hours Distribution</Text>
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.checkboxCard}
+                  onPress={() => {
+                    const newValue = !formData.distributeHoursEvenly;
+                    updateFormData('distributeHoursEvenly', newValue);
+                    if (newValue) {
+                      distributeHoursEvenly();
+                    }
+                  }}
+                >
+                  <View style={[styles.checkbox, formData.distributeHoursEvenly && styles.checkboxChecked]}>
+                    {formData.distributeHoursEvenly && (
+                      <Text>
+                        <Icon name="check" size={16} color="#fff" />
+                      </Text>
+                    )}
+                  </View>
+                  <View style={styles.checkboxContent}>
+                    <Text style={styles.checkboxLabel}>Distribute hours evenly</Text>
+                    <Text style={styles.checkboxDescription}>Apply equal hours across all months</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <View style={styles.tableContainer}>
+                  <View style={styles.tableHeader}>
+                    <Text style={[styles.tableHeaderText, styles.monthColumn]}>Month</Text>
+                    <Text style={[styles.tableHeaderText, styles.percentageColumn]}>Percentage</Text>
+                    <Text style={[styles.tableHeaderText, styles.hoursColumn]}>Hours</Text>
+                  </View>
+
+                  <ScrollView style={styles.tableBody} nestedScrollEnabled>
+                    {formData.monthlyDistribution.map((item, index) => (
+                      <View key={item.month}>
+                        <View
+                          style={[
+                            styles.tableRow,
+                            index % 2 === 0 && styles.tableRowEven
+                          ]}
+                        >
+                          <Text style={[styles.tableCellText, styles.monthColumn]}>{item.month}</Text>
+                          {formData.distributeHoursEvenly ? (
+                            <>
+                              <Text style={[styles.tableCellText, styles.percentageColumn]}>
+                                <Text>{item.percentage}%</Text>
+                              </Text>
+                              <Text style={[styles.tableCellText, styles.hoursColumn]}>
+                                <Text>{parseFloat(item.hours).toFixed(0)}h</Text>
+                              </Text>
+                            </>
+                          ) : (
+                            <>
+                              <View style={styles.percentageColumn}>
+                                <TextInput
+                                  style={styles.tableInput}
+                                  keyboardType="numeric"
+                                  value={item.percentage}
+                                  onChangeText={(text) => updateMonthlyPercentage(index, text)}
+                                  placeholder="0"
+                                />
+                              </View>
+                              <Text style={[styles.tableCellText, styles.hoursColumn]}>
+                                <Text>{parseFloat(item.hours).toFixed(0)}h</Text>
+                              </Text>
+                            </>
+                          )}
+                        </View>
+                        {monthlyErrors[index] && (
+                          <Text style={styles.tableErrorText}>{monthlyErrors[index]}</Text>
+                        )}
+                      </View>
+                    ))}
+                  </ScrollView>
+
+                  <View style={styles.tableTotalRow}>
+                    <Text style={[styles.tableTotalText, styles.monthColumn]}>Total</Text>
+                    <Text style={[styles.tableTotalText, styles.percentageColumn]}>
+                      {calculateTotalPercentage()}
+                    </Text>
+                    <Text style={[styles.tableTotalText, styles.hoursColumn]}>
+                      {calculateTotalHours()}
+                    </Text>
+                  </View>
+                </View>
+
+                {totalPercentageError && (
+                  <Text style={styles.errorText}>
+                    <Icon name="error-outline" size={12} color="#EF4444" /> {totalPercentageError}
+                  </Text>
+                )}
+              </View>
+            )}
+          </>
+        )}
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity
