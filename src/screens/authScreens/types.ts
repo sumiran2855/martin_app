@@ -84,16 +84,11 @@ export type StepProps = Omit<StepperFormProps, 'formData' | 'updateFormData'> & 
 };
 
 export const countryCodes = [
+    { code: '+45', country: 'DK', flag: '🇩🇰' },
     { code: '+1', country: 'US/CA', flag: '🇺🇸' },
     { code: '+44', country: 'UK', flag: '🇬🇧' },
-    { code: '+91', country: 'IN', flag: '🇮🇳' },
     { code: '+49', country: 'DE', flag: '🇩🇪' },
-    { code: '+33', country: 'FR', flag: '🇫🇷' },
-    { code: '+86', country: 'CN', flag: '🇨🇳' },
-    { code: '+81', country: 'JP', flag: '🇯🇵' },
-    { code: '+61', country: 'AU', flag: '🇦🇺' },
-    { code: '+971', country: 'AE', flag: '🇦🇪' },
-    { code: '+7', country: 'RU', flag: '🇷🇺' },
+    { code: '+39', country: 'IT', flag: '🇮🇹' },
 ];
 
 export const models = [
@@ -108,12 +103,11 @@ export const models = [
 ];
 
 export const industries = [
-    'Manufacturing',
-    'Healthcare',
-    'Education',
-    'Retail',
-    'Hospitality',
-    'Agriculture',
+    'Hotel',
+    'School',
+    'Sport',
+    'NursingHome',
+    'Industry',
     'Other',
 ];
 

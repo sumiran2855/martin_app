@@ -140,6 +140,8 @@ const HomeScreen: React.FC = () => {
         console.log(`Pressed: ${item.title}`);
         if (item.id === '1-1') { 
             navigation.navigate('ProductDashboard');
+        } else if (item.id === '1-2') {
+            navigation.navigate('ServiceContract');
         }
     };
 

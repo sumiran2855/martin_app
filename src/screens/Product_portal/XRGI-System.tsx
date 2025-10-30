@@ -1,18 +1,25 @@
-import React from 'react';
-import { Image, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons as Icon } from "@expo/vector-icons";
+import { MaterialIcons as Icon, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import React from 'react';
+import { ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import useDashboard from '../../hooks/useDashboard';
 import Sidebar from '../common/Sidebar';
+import Card from '../../components/Card/Card';
 import styles from './XRGI-System.styles';
 
-// const { width: SCREEN_WIDTH } = Dimensions.get('window');
+type RootStackParamList = {
+  XRGI_System: undefined;
+  XRGI_Details: { item: any };
+};
+
+type XRGISystemScreenNavigationProp = StackNavigationProp<RootStackParamList, 'XRGI_System'>;
 
 interface XRGI_SystemProps { }
 
 const XRGI_System: React.FC<XRGI_SystemProps> = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<XRGISystemScreenNavigationProp>();
   const {
     // State
     selectedFilter,
@@ -38,34 +45,21 @@ const XRGI_System: React.FC<XRGI_SystemProps> = () => {
   };
 
 
+  const handleCardPress = (item: any) => {
+    navigation.navigate('XRGI_Details', { item });
+  };
+
+  const handleDelete = (id: string) => {
+    console.log('Delete item with id:', id);
+  };
+
   const renderCard = (item: any) => (
-    <View key={item.id} style={styles.card}>
-      <View style={styles.cardContent}>
-        <Image source={require('../../../assets/card.png')} style={styles.cardImage} />
-
-        <View style={styles.cardInfo}>
-          <View style={styles.statusContainer}>
-            <Text style={[
-              styles.statusText,
-              item.status === 'Active' ? styles.activeStatusText :
-                item.status === 'Inactive' ? styles.inactiveStatusText :
-                  styles.dataMissingStatusText
-            ]}>
-              {item.status}
-            </Text>
-          </View>
-
-          <Text style={styles.cardName}>{item.name}</Text>
-          <Text style={styles.cardSerial}>{item.serialNumber}</Text>
-        </View>
-
-        <TouchableOpacity style={styles.deleteButton}>
-          <View style={styles.deleteIcon}>
-            <Icon name="delete-outline" size={20} color="#FF3B30" />
-          </View>
-        </TouchableOpacity>
-      </View>
-    </View>
+    <Card
+      key={item.id}
+      item={item}
+      onPress={handleCardPress}
+      onDelete={handleDelete}
+    />
   );
 
   return (
@@ -92,7 +86,7 @@ const XRGI_System: React.FC<XRGI_SystemProps> = () => {
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Ionicons name="search" size={20} color="#64748b" />
           <TextInput
             style={styles.searchInput}
             placeholder="Search by name or XRGI ID"
@@ -110,8 +104,9 @@ const XRGI_System: React.FC<XRGI_SystemProps> = () => {
             style={styles.sortButton}
             onPress={() => setDropdownVisible(!dropdownVisible)}
           >
+            <MaterialIcons name="filter-list" size={20} color="#1a365d" />
             <Text style={styles.sortText}>Sort by :</Text>
-            <Text style={[styles.dropdownIcon, dropdownVisible && styles.dropdownIconRotated]}>▼</Text>
+            <Ionicons name="chevron-down" size={16} color="#1a365d" />
           </TouchableOpacity>
 
           {dropdownVisible && (

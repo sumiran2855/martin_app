@@ -5,7 +5,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f1f5f9',
   },
 
   // Header styles
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
 
   // Title section styles
   titleSection: {
+    backgroundColor: '#ffffff',
     paddingHorizontal: SCREEN_WIDTH * 0.05,
     paddingTop: SCREEN_HEIGHT * 0.025,
     paddingBottom: SCREEN_HEIGHT * 0.015,
@@ -104,6 +105,7 @@ const styles = StyleSheet.create({
 
   // Search container styles
   searchContainer: {
+    backgroundColor: '#ffffff',
     paddingHorizontal: SCREEN_WIDTH * 0.05,
     paddingVertical: SCREEN_HEIGHT * 0.015,
   },
@@ -133,6 +135,7 @@ const styles = StyleSheet.create({
     color: '#1e293b',
     padding: 0,
     fontWeight: '400',
+    marginLeft: 12,
   },
 
   // Controls section styles
@@ -143,6 +146,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SCREEN_WIDTH * 0.05,
     paddingVertical: SCREEN_HEIGHT * 0.015,
     zIndex: 1000,
+    backgroundColor: '#ffffff',
   },
   sortButton: {
     flexDirection: 'row',
@@ -162,7 +166,7 @@ const styles = StyleSheet.create({
   sortText: {
     fontSize: 15,
     color: '#475569',
-    marginRight: 6,
+    marginHorizontal: 8,
     fontWeight: '500',
   },
   dropdownIcon: {
@@ -228,81 +232,90 @@ const styles = StyleSheet.create({
   // Card styles
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 16,
-    marginBottom: SCREEN_HEIGHT * 0.015,
-    shadowColor: '#1a5490',
-    shadowOffset: { width: 0, height: 3 },
+    borderRadius: 12,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 3,
+    shadowRadius: 3,
+    elevation: 1,
     borderWidth: 1,
     borderColor: '#f1f5f9',
   },
   cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: SCREEN_WIDTH * 0.045,
+    padding: 16,
+  },
+  cardImageContainer: {
+    marginRight: 16,
+  },
+  cardImageWrapper: {
+    width: 80,
+    height: 70,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#fff',
   },
   cardImage: {
-    width: 70,
-    height: 52,
-    resizeMode: 'contain',
-    marginRight: 16,
+    width: 60,
+    height: 50,
   },
   cardInfo: {
     flex: 1,
   },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+  statusBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginBottom: 8,
   },
-  statusIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 6,
+  statusBadgeActive: {
+    backgroundColor: '#d1fae5',
   },
-  activeIndicator: {
-    backgroundColor: '#4CAF50',
+  statusBadgeInactive: {
+    backgroundColor: '#fee2e2',
   },
-  inactiveIndicator: {
-    backgroundColor: '#FF5722',
+  statusBadgeDataMissing: {
+    backgroundColor: '#fef3c7',
   },
   statusText: {
     fontSize: 12,
     fontWeight: '600',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    backgroundColor: '#d1fae5',
-    borderRadius: 6,
-    overflow: 'hidden',
-    letterSpacing: 0.5,
     textTransform: 'uppercase',
+    letterSpacing: 0.3,
   },
   activeStatusText: {
     color: '#065f46',
-    backgroundColor: '#d1fae5',
   },
   inactiveStatusText: {
     color: '#991b1b',
-    backgroundColor: '#fee2e2',
+  },
+  dataMissingStatusText: {
+    color: '#92400e',
   },
   cardName: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#1e293b',
-    marginBottom: 6,
-    letterSpacing: -0.2,
+    color: '#0f172a',
+    marginBottom: 4,
   },
   cardSerial: {
     fontSize: 14,
     color: '#64748b',
-    fontWeight: '400',
+    fontWeight: '500',
   },
   deleteButton: {
     padding: 8,
+    borderRadius: 8,
+    borderWidth: 1.5,
+    borderColor: '#fee2e2',
+    backgroundColor: '#fef2f2',
   },
+
   deleteIcon: {
     width: 36,
     height: 36,
@@ -327,6 +340,7 @@ const styles = StyleSheet.create({
     top: '100%',
     left: 0,
     right: 0,
+    width: 200,
     backgroundColor: '#ffffff',
     borderRadius: 12,
     marginTop: 8,
@@ -374,13 +388,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     zIndex: 999,
   },
-
-  // Updated status text styles for Data Missing
-  dataMissingStatusText: {
-    color: '#92400e',
-    backgroundColor: '#fef3c7',
-  },
-
   // Section title for Data Missing
   sectionTitleDataMissing: {
     fontSize: 14,

@@ -1,240 +1,43 @@
+import useRegisterForm from '@/src/hooks/useRegisterForm';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { country, countryCodes, industries, models } from '../../../authScreens/types';
 import styles from './RegisterScreen.styles';
-import { FormData } from '../../authScreens/types';
-import { RootStackParamList } from '../../../navigation/AppNavigator';
 
-type RegisterScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
-interface CountryCode {
-  flag: string;
-  code: string;
-  country: string;
-}
 
 const RegisterScreen: React.FC = () => {
-  const navigation = useNavigation<RegisterScreenNavigationProp>();
-
-  // Dropdown states
-  const [showModelPicker, setShowModelPicker] = useState(false);
-  const [showCountryPicker, setShowCountryPicker] = useState(false);
-  const [showServiceCountryCodePicker, setShowServiceCountryCodePicker] = useState(false);
-  const [showSalesCountryCodePicker, setShowSalesCountryCodePicker] = useState(false);
-  const [showIndustryPicker, setShowIndustryPicker] = useState(false);
-
-  // Form data
-  const [formData, setFormData] = useState<FormData>({
-    companyName: '',
-    vatNo: '',
-    address: '',
-    postcode: '',
-    city: '',
-    email: '',
-    phone: '',
-    firstName: '',
-    lastName: '',
-    contactEmail: '',
-    contactPhone: '',
-    countryCode: '+1',
-    contactCountryCode: '+1',
-    systemName: '',
-    xrgiIdNumber: '',
-    selectedModel: '',
-    systemAddress: '',
-    systemPostcode: '',
-    systemCity: '',
-    systemCountry: '',
-    hasServiceContract: null,
-    interestedInServiceContract: null,
-    serviceProviderName: '',
-    serviceProviderEmail: '',
-    serviceProviderPhone: '',
-    serviceCountryCode: '+1',
-    isSalesPartnerSame: null,
-    salesPartnerName: '',
-    salesPartnerEmail: '',
-    salesPartnerPhone: '',
-    salesCountryCode: '+1',
-    isSystemInstalled: false,
-    energyCheckPlus: false,
-    expectedAnnualSavings: '',
-    expectedCO2Savings: '',
-    expectedOperatingHours: '',
-    industry: '',
-    recipientEmails: '',
-    distributeHoursEvenly: true,
-    monthlyDistribution: [
-      { month: 'January', percentage: '8.33', hours: '0', editable: true },
-      { month: 'February', percentage: '8.33', hours: '0', editable: true },
-      { month: 'March', percentage: '8.33', hours: '0', editable: true },
-      { month: 'April', percentage: '8.33', hours: '0', editable: true },
-      { month: 'May', percentage: '8.33', hours: '0', editable: true },
-      { month: 'June', percentage: '8.33', hours: '0', editable: true },
-      { month: 'July', percentage: '8.33', hours: '0', editable: true },
-      { month: 'August', percentage: '8.33', hours: '0', editable: true },
-      { month: 'September', percentage: '8.33', hours: '0', editable: true },
-      { month: 'October', percentage: '8.33', hours: '0', editable: true },
-      { month: 'November', percentage: '8.33', hours: '0', editable: true },
-      { month: 'December', percentage: '8.33', hours: '0', editable: true },
-    ],
-    installSmartPrice: false,
-    installationTiming: 'asap',
-  });
-
-  const [monthlyErrors, setMonthlyErrors] = useState<string[]>([]);
-  const [totalPercentageError, setTotalPercentageError] = useState('');
-
-  // Data arrays
-  const models = ['XRGI 15G', 'XRGI 20G', 'XRGI 15H', 'XRGI 20H'];
-  const countries = ['United States', 'Canada', 'United Kingdom', 'Germany', 'France', 'Australia', 'India'];
-  const industries = ['Residential', 'Commercial', 'Industrial', 'Healthcare', 'Education', 'Hospitality', 'Other'];
-  const countryCodes: CountryCode[] = [
-    { flag: '🇺🇸', code: '+1', country: 'United States' },
-    { flag: '🇬🇧', code: '+44', country: 'United Kingdom' },
-    { flag: '🇩🇪', code: '+49', country: 'Germany' },
-    { flag: '🇫🇷', code: '+33', country: 'France' },
-    { flag: '🇮🇳', code: '+91', country: 'India' },
-  ];
-
-  const updateFormData = (key: keyof FormData, value: any) => {
-    setFormData(prev => ({ ...prev, [key]: value }));
-  };
-
-  const validateStep1 = () => {
-    if (!formData.systemName.trim()) {
-      Alert.alert('Error', 'Please enter a system name');
-      return false;
-    }
-    if (!formData.selectedModel) {
-      Alert.alert('Error', 'Please select a model');
-      return false;
-    }
-    if (!formData.xrgiIdNumber.trim() || formData.xrgiIdNumber.length !== 10) {
-      Alert.alert('Error', 'Please enter a valid 10-digit XRGI ID Number');
-      return false;
-    }
-    if (!formData.systemAddress.trim() || !formData.systemCity.trim() || !formData.systemCountry) {
-      Alert.alert('Error', 'Please fill in all address fields');
-      return false;
-    }
-    if (formData.hasServiceContract === null) {
-      Alert.alert('Error', 'Please select if you have a service contract');
-      return false;
-    }
-    if (formData.hasServiceContract) {
-      if (!formData.serviceProviderName.trim() || !formData.serviceProviderEmail.trim() || !formData.serviceProviderPhone.trim()) {
-        Alert.alert('Error', 'Please fill in all service provider details');
-        return false;
-      }
-      if (formData.isSalesPartnerSame === null) {
-        Alert.alert('Error', 'Please select if sales partner is same as service provider');
-        return false;
-      }
-      if (formData.isSalesPartnerSame === false) {
-        if (!formData.salesPartnerName.trim() || !formData.salesPartnerEmail.trim() || !formData.salesPartnerPhone.trim()) {
-          Alert.alert('Error', 'Please fill in all sales partner details');
-          return false;
-        }
-      }
-    }
-    return true;
-  };
-
-  const handleSubmit = () => {
-    if (validateStep1()) {
-      navigation.navigate('Installation', { formData });
-    }
-  };
-
-  const handleBackPress = () => {
-    navigation.goBack();
-  };
-
   const Icon = MaterialIcons;
+  const {
+    // Form state
+    formData,
+    updateFormData,
 
-  const distributeHoursEvenly = () => {
-    const totalHours = parseFloat(formData.expectedOperatingHours) || 0;
-    const hoursPerMonth = totalHours / 12;
-    const percentagePerMonth = (100 / 12);
+    // UI state
+    showModelPicker,
+    setShowModelPicker,
+    showCountryPicker,
+    setShowCountryPicker,
+    showServiceCountryCodePicker,
+    setShowServiceCountryCodePicker,
+    showSalesCountryCodePicker,
+    setShowSalesCountryCodePicker,
+    showIndustryPicker,
+    setShowIndustryPicker,
 
-    const newDistribution = formData.monthlyDistribution.map(month => ({
-      ...month,
-      hours: hoursPerMonth.toFixed(2),
-      percentage: percentagePerMonth.toFixed(2),
-    }));
+    // Validation
+    monthlyErrors,
+    totalPercentageError,
+    errors,
 
-    setFormData(prev => ({
-      ...prev,
-      monthlyDistribution: newDistribution,
-    }));
-
-    setMonthlyErrors(Array(12).fill(''));
-    setTotalPercentageError('');
-  };
-
-  const validateMonthHours = (hours: number, index: number) => {
-    const errors = [...monthlyErrors];
-    if (hours > 730) {
-      errors[index] = 'Hours cannot exceed 730 per month';
-    } else {
-      errors[index] = '';
-    }
-    setMonthlyErrors(errors);
-  };
-
-  const validateTotalPercentage = () => {
-    const total = formData.monthlyDistribution.reduce((sum, month) => {
-      return sum + (parseFloat(month.percentage) || 0);
-    }, 0);
-
-    if (total > 100) {
-      setTotalPercentageError('Total percentage cannot exceed 100%');
-    } else if (total < 100) {
-      setTotalPercentageError('Total percentage should equal 100%');
-    } else {
-      setTotalPercentageError('');
-    }
-  };
-
-  const updateMonthlyPercentage = (index: number, value: string) => {
-    const totalHours = parseFloat(formData.expectedOperatingHours) || 0;
-    const percentage = parseFloat(value) || 0;
-    const hours = (totalHours * percentage) / 100;
-
-    const newDistribution = [...formData.monthlyDistribution];
-    newDistribution[index] = {
-      ...newDistribution[index],
-      percentage: value,
-      hours: hours.toFixed(2),
-    };
-
-    setFormData(prev => ({
-      ...prev,
-      monthlyDistribution: newDistribution,
-    }));
-
-    validateMonthHours(hours, index);
-    setTimeout(validateTotalPercentage, 0);
-  };
-
-  const calculateTotalHours = () => {
-    const total = formData.monthlyDistribution.reduce((sum, month) => {
-      const hours = parseFloat(month.hours) || 0;
-      return sum + hours;
-    }, 0);
-    return `${total.toFixed(0)}h`;
-  };
-
-  const calculateTotalPercentage = () => {
-    const total = formData.monthlyDistribution.reduce((sum, month) => {
-      const percentage = parseFloat(month.percentage) || 0;
-      return sum + percentage;
-    }, 0);
-    return `${total.toFixed(2)}%`;
-  };
+    // Methods
+    handleSubmit,
+    distributeHoursEvenly,
+    updateMonthlyPercentage,
+    calculateTotalHours,
+    calculateTotalPercentage,
+    handleBackPress,
+  } = useRegisterForm();
 
   return (
     <View style={styles.container}>
@@ -279,6 +82,7 @@ const RegisterScreen: React.FC = () => {
                 value={formData.systemName}
                 onChangeText={(text) => updateFormData('systemName', text)}
               />
+              {errors.systemName && <Text style={styles.errorText}><Icon name="error-outline" size={12} color="#EF4444" /> {errors.systemName}</Text>}
             </View>
             <Text style={styles.helperText}>
               <Icon name="info-outline" size={12} color="#999" /> Example: "System in basement 01"
@@ -298,6 +102,7 @@ const RegisterScreen: React.FC = () => {
                 value={formData.xrgiIdNumber}
                 onChangeText={(text) => updateFormData('xrgiIdNumber', text)}
               />
+              {errors.xrgiIdNumber && <Text style={styles.errorText}><Icon name="error-outline" size={12} color="#EF4444" /> {errors.xrgiIdNumber}</Text>}
             </View>
             <Text style={styles.helperText}>
               <Icon name="info-outline" size={12} color="#999" /> The XRGI® ID is a 10 digit number located on the side of the IQ-Control Panel.
@@ -321,6 +126,7 @@ const RegisterScreen: React.FC = () => {
                   color="#666"
                 />
               </View>
+              {errors.selectedModel && <Text style={[styles.errorText, { marginTop: 4 }]}><Icon name="error-outline" size={12} color="#EF4444" /> {errors.selectedModel}</Text>}
             </TouchableOpacity>
             {showModelPicker && (
               <View style={styles.dropdownOverlay}>
@@ -369,6 +175,7 @@ const RegisterScreen: React.FC = () => {
                 value={formData.systemAddress}
                 onChangeText={(text) => updateFormData('systemAddress', text)}
               />
+              {errors.systemAddress && <Text style={styles.errorText}><Icon name="error-outline" size={12} color="#EF4444" /> {errors.systemAddress}</Text>}
             </View>
           </View>
 
@@ -382,6 +189,7 @@ const RegisterScreen: React.FC = () => {
                 value={formData.systemPostcode}
                 onChangeText={(text) => updateFormData('systemPostcode', text)}
               />
+              {errors.systemPostcode && <Text style={styles.errorText}><Icon name="error-outline" size={12} color="#EF4444" /> {errors.systemPostcode}</Text>}
             </View>
 
             <View style={[styles.inputGroup, styles.inputHalf]}>
@@ -393,6 +201,7 @@ const RegisterScreen: React.FC = () => {
                 value={formData.systemCity}
                 onChangeText={(text) => updateFormData('systemCity', text)}
               />
+              {errors.systemCity && <Text style={styles.errorText}><Icon name="error-outline" size={12} color="#EF4444" /> {errors.systemCity}</Text>}
             </View>
           </View>
 
@@ -416,7 +225,7 @@ const RegisterScreen: React.FC = () => {
             {showCountryPicker && (
               <View style={styles.dropdownOverlay}>
                 <ScrollView style={styles.countryCodeList} nestedScrollEnabled>
-                  {countries.map((countryItem) => (
+                  {country.map((countryItem) => (
                     <TouchableOpacity
                       key={countryItem}
                       style={styles.pickerOption}
@@ -892,6 +701,9 @@ const RegisterScreen: React.FC = () => {
                         onChangeText={(text) => updateFormData('expectedAnnualSavings', text)}
                       />
                     </View>
+                    <Text style={styles.errorText}>
+                      <Icon name="error-outline" size={12} color="#EF4444" /> {errors.expectedAnnualSavings}
+                    </Text>
                   </View>
 
                   <View style={styles.inputGroup}>
@@ -907,6 +719,9 @@ const RegisterScreen: React.FC = () => {
                         onChangeText={(text) => updateFormData('expectedCO2Savings', text)}
                       />
                     </View>
+                    <Text style={styles.errorText}>
+                      <Icon name="error-outline" size={12} color="#EF4444" /> {errors.expectedCO2Savings}
+                    </Text>
                   </View>
 
                   <View style={styles.inputGroup}>
@@ -988,6 +803,9 @@ const RegisterScreen: React.FC = () => {
                         onChangeText={(text) => updateFormData('recipientEmails', text)}
                       />
                     </View>
+                    <Text style={styles.errorText}>
+                      <Icon name="error-outline" size={12} color="#EF4444" /> {errors.recipientEmails}
+                    </Text>
                   </View>
                 </>
               )}

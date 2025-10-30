@@ -38,6 +38,7 @@ export const useStepperForm = () => {
         systemCity: '',
         systemCountry: '',
         hasServiceContract: null,
+        interestedInServiceContract: null,
         serviceProviderName: '',
         serviceProviderEmail: '',
         serviceProviderPhone: '',
