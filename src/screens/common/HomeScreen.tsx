@@ -90,24 +90,38 @@ const HomeScreen: React.FC = () => {
             items: [
                 {
                     id: '2-1',
+                    title: 'System Status',
+                    icon: 'monitor',
+                    color: '#8E24AA',
+                    subtitle: 'View system status'
+                },
+                {
+                    id: '2-2',
                     title: 'Statistics',
                     icon: 'bar-chart',
                     color: '#8E24AA',
                     subtitle: 'View analytics'
                 },
                 {
-                    id: '2-2',
+                    id: '2-3',
                     title: 'System Configuration',
                     icon: 'settings',
                     color: '#3949AB',
                     subtitle: 'Configure settings'
                 },
                 {
-                    id: '2-3',
+                    id: '2-4',
                     title: 'Service Reports',
                     icon: 'description',
                     color: '#F4511E',
                     subtitle: 'Access reports'
+                },
+                {
+                    id: '2-5',
+                    title: 'Call Details',
+                    icon: 'list',
+                    color: '#F4511E',
+                    subtitle: 'View call details'
                 },
             ],
         },
@@ -118,9 +132,9 @@ const HomeScreen: React.FC = () => {
                 {
                     id: '3-1',
                     title: 'Unit List',
-                    icon: 'view-list',
+                    icon: 'contacts',
                     color: '#00897B',
-                    subtitle: 'Browse units'
+                    subtitle: 'XRGI® units'
                 },
             ],
         },
@@ -138,10 +152,18 @@ const HomeScreen: React.FC = () => {
 
     const handleMenuPress = (item: MenuItem) => {
         console.log(`Pressed: ${item.title}`);
-        if (item.id === '1-1') { 
+        if (item.id === '1-1') {
             navigation.navigate('ProductDashboard');
         } else if (item.id === '1-2') {
             navigation.navigate('ServiceContract');
+        } else if (item.id === '2-1') {
+            navigation.navigate('SystemStatus');
+        } else if (item.id === '2-2') {
+            navigation.navigate('Statistics');
+        } else if (item.id === '2-3') {
+            navigation.navigate('SystemConfiguration');
+        } else if (item.id === '2-5') {
+            navigation.navigate('CallDetails');
         }
     };
 

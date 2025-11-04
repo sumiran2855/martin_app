@@ -93,8 +93,8 @@ const ServiceContractScreen: React.FC = () => {
         navigation.goBack();
     };
 
-    const handleCardPress = (item: XRGISystem) => {
-        console.log('Card pressed:', item.id);
+    const handleCardPress = (item: any) => {
+        navigation.navigate('XRGI_Details', { item });
     };
 
     const handleDelete = (id: string) => {
