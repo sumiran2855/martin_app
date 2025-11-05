@@ -55,7 +55,6 @@ interface CallData {
 }
 
 const CallDetailResultScreen: React.FC<CallDetailResultScreenProps> = ({ navigation, route }) => {
-    const { fromDate, toDate } = route.params;
     const [expandedIncidents, setExpandedIncidents] = useState<{ [key: string]: boolean }>({});
 
     // Enhanced sample data matching the image structure
@@ -119,6 +118,10 @@ const CallDetailResultScreen: React.FC<CallDetailResultScreenProps> = ({ navigat
         }));
     };
 
+    const HandleHeatDistribution = () => {
+        navigation.navigate('HeatDistribution');
+    };
+
     const DataRow = ({ label, value, valueColor }: { label: string; value: string; valueColor?: string }) => (
         <View style={styles.dataRow}>
             <Text style={styles.dataLabel}>{label}</Text>
@@ -146,12 +149,12 @@ const CallDetailResultScreen: React.FC<CallDetailResultScreenProps> = ({ navigat
                     </View>
                     <Text style={styles.serialNumber}>{callData.serialNumber} - {callData.systemName}</Text>
 
-                    <View style={styles.distributorCard}>
+                    <TouchableOpacity style={styles.distributorCard} onPress={HandleHeatDistribution}>
                         <View style={styles.distributorIcon}>
                             <Ionicons name="thermometer-outline" size={24} color="#f6b53bff" />
                         </View>
-                        <Text style={styles.distributorText}>{callData.heatDistributor}</Text>
-                    </View>
+                        <Text style={styles.distributorText}>Heat Distributor</Text>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Time of Call Section */}

@@ -22,7 +22,6 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
     isPasswordVisible,
     selectedLanguage,
     isSubmitting,
-    portalType,
     rememberMe,
     
     // Form

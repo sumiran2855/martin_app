@@ -21,6 +21,14 @@ import CallDetailsScreen from '../screens/Service_portal/call-details-Screen';
 import Get_CallDetailsScreen from '../screens/Service_portal/Components/call-details/get-call-details-screen';
 import CallDetailsResultScreen from '../screens/Service_portal/Components/call-details/call-detail-results-screen';
 import SystemConfigurationDetailScreen from '../screens/Service_portal/Components/System-configuration/system-configurationDetailScreen';
+import ServiceReportScreen from '../screens/Service_portal/Service-reportScreen';
+import ServiceReportDetailScreen from '../screens/Service_portal/Components/service-report/ServiceReportDetailScreen';
+import HeatDistributionScreen from '../screens/Service_portal/Components/call-details/heat-distributionScreen';
+import ContactScreen from '../screens/common/ContactScree';
+import UnitListScreen from '../screens/Unit_list/unit-listScreen';
+import UnitDetailScreen from '../screens/Unit_list/unit-detailScreen';
+import ProfileScreen from '../screens/common/ProfileScreen';
+import SettingScreen from '../screens/common/SettingScreen';
 
 export type PortalType = 'PRODUCT' | 'SERVICE';
 
@@ -45,6 +53,14 @@ export type RootStackParamList = {
   CallDetails: undefined;
   Get_CallDetails: undefined;
   CallDetailsResult: undefined;
+  ServiceReport: undefined;
+  ServiceReportDetail: undefined;
+  HeatDistribution: undefined;
+  Contact: undefined;
+  UnitList: undefined;
+  UnitDetail: undefined;
+  Profile: undefined;
+  Setting: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -146,6 +162,46 @@ export default function AppNavigator() {
         <Stack.Screen
           name="CallDetailsResult"
           component={CallDetailsResultScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="HeatDistribution"
+          component={HeatDistributionScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ServiceReport"
+          component={ServiceReportScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ServiceReportDetail"
+          component={ServiceReportDetailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Contact"
+          component={ContactScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="UnitList"
+          component={UnitListScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="UnitDetail"
+          component={UnitDetailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Setting"
+          component={SettingScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

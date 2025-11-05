@@ -41,6 +41,11 @@ const HomeScreen: React.FC = () => {
 
     const toggleProfileMenu = () => {
         const toValue = showProfileMenu ? 0 : 1;
+
+        if (!showProfileMenu && searchVisible) {
+            setSearchVisible(false);
+        }
+
         setShowProfileMenu(!showProfileMenu);
 
         Animated.spring(dropdownAnimation, {
@@ -52,14 +57,12 @@ const HomeScreen: React.FC = () => {
     };
 
     const handleLogout = () => {
-        // Handle logout logic here
-        console.log('User logged out');
+        navigation.navigate('Login', { portalType: 'PRODUCT' });
         setShowProfileMenu(false);
     };
 
     const handleProfile = () => {
-        // Handle profile navigation here
-        console.log('Navigate to profile');
+        navigation.navigate('Profile');
         setShowProfileMenu(false);
     };
 
@@ -160,10 +163,14 @@ const HomeScreen: React.FC = () => {
             navigation.navigate('SystemStatus');
         } else if (item.id === '2-2') {
             navigation.navigate('Statistics');
+        } else if (item.id === '2-4') {
+            navigation.navigate('ServiceReport');
         } else if (item.id === '2-3') {
             navigation.navigate('SystemConfiguration');
         } else if (item.id === '2-5') {
             navigation.navigate('CallDetails');
+        } else if (item.id === '3-1') {
+            navigation.navigate('UnitList');
         }
     };
 
@@ -224,7 +231,12 @@ const HomeScreen: React.FC = () => {
                     <View style={styles.headerRight}>
                         <TouchableOpacity
                             style={styles.iconButton}
-                            onPress={() => setSearchVisible(!searchVisible)}
+                            onPress={() => {
+                                if (showProfileMenu) {
+                                    toggleProfileMenu();
+                                }
+                                setSearchVisible(!searchVisible);
+                            }}
                             activeOpacity={0.7}
                         >
                             <Icon name="search" size={22} color="#546E7A" />
@@ -296,8 +308,8 @@ const HomeScreen: React.FC = () => {
                                 <TouchableOpacity
                                     style={styles.dropdownItem}
                                     onPress={() => {
-                                        console.log('Navigate to settings');
                                         setShowProfileMenu(false);
+                                        navigation.navigate('Setting');
                                     }}
                                     activeOpacity={0.7}
                                 >
@@ -379,7 +391,7 @@ const HomeScreen: React.FC = () => {
                             <Text style={styles.helpDescription}>
                                 Our support team is here to help you 24/7
                             </Text>
-                            <TouchableOpacity style={styles.helpButton} activeOpacity={0.8}>
+                            <TouchableOpacity style={styles.helpButton} activeOpacity={0.8} onPress={() => navigation.navigate('Contact')}>
                                 <Text style={styles.helpButtonText}>Contact Support</Text>
                             </TouchableOpacity>
                         </View>
